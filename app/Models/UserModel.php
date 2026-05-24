@@ -8,49 +8,79 @@ use CodeIgniter\Model;
 
 class UserModel extends Model
 {
-    protected $table            = 'users';
-    protected $primaryKey       = 'id';
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = ['name', 'email', 'password_hash', 'role', 'is_active'];
+    protected $returnType = 'array';
 
-    protected bool $allowEmptyInserts = false;
-
-    // Dates
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
 
-    // Validation
-    protected $validationRules      = [
-        'name'          => 'required|min_length[2]|max_length[255]',
-        'email'         => 'required|valid_email|is_unique[users.email]',
-        'password_hash' => 'required|min_length[8]',
-        'role'          => 'required|in_list[superadmin,manager,staff]'
+    protected $allowedFields = [
+        'name',
+        'email',
+        'password_hash',
+        'role',
+        'is_active',
     ];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
 
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = ['hashPassword'];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    /**
+     * Validation Rules
+     */
+    protected $validationRules = [
+        'name' => [
+            'rules' => 'required|min_length[2]|max_length[100]',
+            'errors' => [
+                'required' => 'Name is required',
+                'min_length' => 'Name must be at least 2 characters',
+                'max_length' => 'Name cannot exceed 100 characters',
+            ],
+        ],
 
-    protected function hashPassword(array $data)
+        'email' => [
+            'rules' => 'required|valid_email|is_unique[users.email]',
+            'errors' => [
+                'required' => 'Email is required',
+                'valid_email' => 'Invalid email format',
+                'is_unique' => 'Email already exists',
+            ],
+        ],
+
+        'password_hash' => [
+            'rules' => 'required|min_length[6]',
+            'errors' => [
+                'required' => 'Password is required',
+                'min_length' => 'Password must be at least 6 characters',
+            ],
+        ],
+
+        'role' => [
+            'rules' => 'required|in_list[superadmin,manager,staff]',
+            'errors' => [
+                'required' => 'Role is required',
+                'in_list' => 'Invalid role selected',
+            ],
+        ],
+    ];
+
+    protected $beforeInsert = ['hashPassword'];
+    protected $beforeUpdate = ['hashPassword'];
+
+    /**
+     * Automatically hash password before saving
+     */
+    protected function hashPassword(array $data): array
     {
-        if (isset($data['data']['password_hash'])) {
-            $data['data']['password_hash'] = password_hash($data['data']['password_hash'], PASSWORD_BCRYPT);
+        if (!isset($data['data']['password_hash'])) {
+            return $data;
         }
+
+        $data['data']['password_hash'] = password_hash(
+            $data['data']['password_hash'],
+            PASSWORD_BCRYPT
+        );
 
         return $data;
     }

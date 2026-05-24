@@ -12,44 +12,43 @@ class CreateUsersTable extends Migration
     {
         $this->forge->addField([
             'id' => [
-                'type'           => 'INT',
-                'constraint'     => 11,
-                'unsigned'       => true,
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
                 'auto_increment' => true,
             ],
             'name' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 255,
+                'type' => 'VARCHAR',
+                'constraint' => 100,
             ],
             'email' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 255,
-                'unique'     => true,
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+                'unique' => true,
             ],
             'password_hash' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 255,
             ],
             'role' => [
-                'type'       => 'ENUM',
+                'type' => 'ENUM',
                 'constraint' => ['superadmin', 'manager', 'staff'],
-                'default'    => 'staff',
+                'default' => 'staff',
             ],
             'is_active' => [
-                'type'       => 'TINYINT',
-                'constraint' => 1,
-                'default'    => 1,
+                'type' => 'BOOLEAN',
+                'default' => 1,
             ],
             'created_at' => [
-                'type'       => 'DATETIME',
-                'null'       => true,
+                'type' => 'DATETIME',
+                'null' => true,
             ],
             'updated_at' => [
-                'type'       => 'DATETIME',
-                'null'       => true,
+                'type' => 'DATETIME',
+                'null' => true,
             ],
         ]);
-        
+
         $this->forge->addKey('id', true);
         $this->forge->createTable('users');
     }
