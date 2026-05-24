@@ -6,7 +6,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateTokensTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     public function up()
     {
@@ -17,17 +17,14 @@ class CreateTokensTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'user_id' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-            ],
-            'token' => [
+            'name' => [
                 'type' => 'VARCHAR',
-                'constraint' => 64,
+                'constraint' => 100,
             ],
-            'expires_at' => [
-                'type' => 'DATETIME',
+            'description' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -36,12 +33,11 @@ class CreateTokensTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('tokens');
+        $this->forge->createTable('categories');
     }
 
     public function down()
     {
-        $this->forge->dropTable('tokens');
+        $this->forge->dropTable('categories');
     }
 }
