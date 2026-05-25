@@ -66,7 +66,6 @@ class UserModel extends Model
     ];
 
     protected $beforeInsert = ['hashPassword'];
-    protected $beforeUpdate = ['hashPassword'];
 
     /**
      * Automatically hash password before saving

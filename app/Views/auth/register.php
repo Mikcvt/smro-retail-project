@@ -124,34 +124,36 @@
             
             <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
-                <input type="text" name="name" class="form-control <?= validation_show_error('name') ? 'is-invalid' : '' ?>" id="name" value="<?= esc(old('name')) ?>" placeholder="John Doe">
-                <div class="invalid-feedback">
-                    <?= validation_show_error('name') ?>
-                </div>
+                <input type="text" name="name" class="form-control <?= session('errors.name') ? 'is-invalid' : '' ?>" id="name" value="<?= esc(old('name')) ?>" placeholder="John Doe">
+                <div class="invalid-feedback"><?= session('errors.name') ?></div>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control <?= validation_show_error('email') ? 'is-invalid' : '' ?>" id="email" value="<?= esc(old('email')) ?>" placeholder="john@example.com">
-                <div class="invalid-feedback">
-                    <?= validation_show_error('email') ?>
-                </div>
+                <input type="email" name="email" class="form-control <?= session('errors.email') ? 'is-invalid' : '' ?>" id="email" value="<?= esc(old('email')) ?>" placeholder="john@example.com">
+                <div class="invalid-feedback"><?= session('errors.email') ?></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-select <?= session('errors.role') ? 'is-invalid' : '' ?>" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 10px; padding: 0.75rem 1rem;">
+                    <option value="staff" <?= old('role') === 'staff' ? 'selected' : '' ?>>Staff</option>
+                    <option value="manager" <?= old('role') === 'manager' ? 'selected' : '' ?>>Manager</option>
+                    <option value="superadmin" <?= old('role') === 'superadmin' ? 'selected' : '' ?>>Super Admin</option>
+                </select>
+                <div class="invalid-feedback"><?= session('errors.role') ?></div>
             </div>
             
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control <?= validation_show_error('password') ? 'is-invalid' : '' ?>" id="password" placeholder="••••••••">
-                <div class="invalid-feedback">
-                    <?= validation_show_error('password') ?>
-                </div>
+                <input type="password" name="password" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" id="password" placeholder="••••••••">
+                <div class="invalid-feedback"><?= session('errors.password') ?></div>
             </div>
 
             <div class="mb-4">
                 <label for="confirm_password" class="form-label">Confirm Password</label>
-                <input type="password" name="confirm_password" class="form-control <?= validation_show_error('confirm_password') ? 'is-invalid' : '' ?>" id="confirm_password" placeholder="••••••••">
-                <div class="invalid-feedback">
-                    <?= validation_show_error('confirm_password') ?>
-                </div>
+                <input type="password" name="confirm_password" class="form-control <?= session('errors.confirm_password') ? 'is-invalid' : '' ?>" id="confirm_password" placeholder="••••••••">
+                <div class="invalid-feedback"><?= session('errors.confirm_password') ?></div>
             </div>
             
             <div class="d-grid mb-4">

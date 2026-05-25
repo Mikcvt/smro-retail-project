@@ -34,51 +34,32 @@ class ProductModel extends Model
         'is_active',
     ];
 
-<<<<<<< HEAD
-    protected $validationRules = [
-        'name'        => 'required|max_length[255]',
-        'category_id' => 'required|integer',
-        'brand'       => 'required|max_length[120]',
-        'base_price'  => 'required|decimal|greater_than[0]',
-        'description' => 'permit_empty|max_length[1000]',
-    ];
-
-    protected $validationMessages = [
-        'name'       => ['required' => 'Product name is required.'],
-        'base_price' => ['greater_than' => 'Price must be greater than zero.'],
-    ];
-
-    protected $skipValidation = false;
-=======
-    /**
-     * Validation Rules
-     */
     protected $validationRules = [
         'category_id' => [
             'rules' => 'required|is_not_unique[categories.id]',
             'errors' => [
-                'required' => 'Category is required',
+                'required'      => 'Category is required',
                 'is_not_unique' => 'Selected category does not exist',
             ],
         ],
-
         'name' => [
             'rules' => 'required|min_length[2]|max_length[150]',
             'errors' => [
-                'required' => 'Product name is required',
+                'required'   => 'Product name is required',
                 'min_length' => 'Product name too short',
                 'max_length' => 'Product name too long',
             ],
         ],
-
         'base_price' => [
             'rules' => 'required|decimal|greater_than_equal_to[0]',
             'errors' => [
                 'required' => 'Base price is required',
-                'decimal' => 'Base price must be a valid number',
+                'decimal'  => 'Base price must be a valid number',
             ],
         ],
     ];
+
+    protected $skipValidation = false;
 
     /**
      * Get products with category name (JOIN example)
@@ -100,5 +81,4 @@ class ProductModel extends Model
             ->where('products.id', $id)
             ->first();
     }
->>>>>>> e1a4e87160f2fef6bf37b5f13f7eb5d11f666265
 }

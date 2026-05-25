@@ -9,7 +9,12 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Public routes
-$routes->get('/', 'Home::index');
+$routes->get('/', static function () {
+    if (session()->get('is_logged_in')) {
+        return redirect()->to('/dashboard');
+    }
+    return redirect()->to('/login');
+});
 $routes->match(['get', 'post'], 'login', 'AuthController::login');
 $routes->match(['get', 'post'], 'register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');
@@ -20,14 +25,31 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
     // Resource group for products (Member 3)
     $routes->resource('products', ['controller' => 'ProductController']);
+    $routes->post('products/(:num)/stock', 'ProductController::adjustStock/$1');
 
-    // Route group for sales (Member 4)
-    $routes->group('sales', static function ($routes) {
-        // Sales routes will go here
-    });
+    // Sales routes (Member 4)
+    $routes->get('sales', 'SaleController::index');
+    $routes->get('sales/create', 'SaleController::create');
+    $routes->post('sales', 'SaleController::store');
+    $routes->post('sales/(:num)/void', 'SaleController::void/$1');
 
-    // Route group for API with api_auth filter
-    $routes->group('api', ['filter' => 'api_auth'], static function ($routes) {
-        // API routes will go here
-    });
+    // Returns routes (Member 4)
+    $routes->get('returns', 'ReturnController::index');
+    $routes->get('returns/create', 'ReturnController::create');
+    $routes->post('returns', 'ReturnController::store');
+    $routes->post('returns/(:num)/approve', 'ReturnController::approve/$1');
+    $routes->post('returns/(:num)/reject', 'ReturnController::reject/$1');
+
+    // Internal AJAX lookup for return form
+    $routes->get('api/sales/lookup', 'SaleController::lookup');
+});
+
+// API token generation — public, must be before the api_auth group (Member 4)
+$routes->post('api/auth/token', 'ProductApiController::token');
+
+// API routes — Bearer Token protected (Member 4)
+$routes->group('api', ['filter' => 'api_auth'], static function ($routes) {
+    $routes->get('products', 'ProductApiController::index');
+    $routes->get('products/(:num)', 'ProductApiController::show/$1');
+    $routes->get('products/(:num)/stock', 'ProductApiController::stock/$1');
 });

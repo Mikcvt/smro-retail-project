@@ -20,14 +20,14 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Product Name</label>
-                        <input type="text" name="name" class="form-control <?= validation_show_error('name') ? 'is-invalid' : '' ?>" 
+                        <input type="text" name="name" class="form-control <?= session('errors.name') ? 'is-invalid' : '' ?>" 
                                value="<?= old('name') ?>" required>
-                        <div class="invalid-feedback"><?= validation_show_error('name') ?></div>
+                        <div class="invalid-feedback"><?= session('errors.name') ?></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Category</label>
-                        <select name="category_id" class="form-select <?= validation_show_error('category_id') ? 'is-invalid' : '' ?>" required>
+                        <select name="category_id" class="form-select <?= session('errors.category_id') ? 'is-invalid' : '' ?>" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat['id'] ?>" <?= old('category_id') == $cat['id'] ? 'selected' : '' ?>>
@@ -35,21 +35,21 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <div class="invalid-feedback"><?= validation_show_error('category_id') ?></div>
+                        <div class="invalid-feedback"><?= session('errors.category_id') ?></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Brand</label>
-                        <input type="text" name="brand" class="form-control <?= validation_show_error('brand') ? 'is-invalid' : '' ?>" 
+                        <input type="text" name="brand" class="form-control <?= session('errors.brand') ? 'is-invalid' : '' ?>" 
                                value="<?= old('brand') ?>" required>
-                        <div class="invalid-feedback"><?= validation_show_error('brand') ?></div>
+                        <div class="invalid-feedback"><?= session('errors.brand') ?></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Base Price (₱)</label>
-                        <input type="number" step="0.01" name="base_price" class="form-control <?= validation_show_error('base_price') ? 'is-invalid' : '' ?>" 
+                        <input type="number" step="0.01" name="base_price" class="form-control <?= session('errors.base_price') ? 'is-invalid' : '' ?>" 
                                value="<?= old('base_price') ?>" required>
-                        <div class="invalid-feedback"><?= validation_show_error('base_price') ?></div>
+                        <div class="invalid-feedback"><?= session('errors.base_price') ?></div>
                     </div>
 
                     <div class="col-12 mb-3">
@@ -59,10 +59,10 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Product Image</label>
-                        <input type="file" name="image" class="form-control <?= validation_show_error('image') ? 'is-invalid' : '' ?>" 
+                        <input type="file" name="image" class="form-control <?= session('errors.image') ? 'is-invalid' : '' ?>" 
                                accept="image/jpeg,image/png,image/webp">
                         <div class="form-text">Max 2MB. JPG, PNG, or WEBP only.</div>
-                        <div class="invalid-feedback"><?= validation_show_error('image') ?></div>
+                        <div class="invalid-feedback"><?= session('errors.image') ?></div>
                     </div>
                 </div>
 
@@ -83,7 +83,7 @@
                             <input type="text" name="variants[0][sku]" class="form-control" placeholder="SKU" required>
                         </div>
                         <div class="col-md-2">
-                            <input type="number" name="variants[0][stock]" class="form-control" placeholder="Stock" value="0" min="0" required>
+                            <input type="number" name="variants[0][stock_quantity]" class="form-control" placeholder="Stock" value="0" min="0" required>
                         </div>
                         <div class="col-md-2">
                             <input type="number" step="0.01" name="variants[0][price_modifier]" class="form-control" placeholder="Price ±" value="0">
@@ -124,7 +124,7 @@ document.getElementById('add-variant').addEventListener('click', function() {
             <input type="text" name="variants[${index}][sku]" class="form-control" placeholder="SKU" required>
         </div>
         <div class="col-md-2">
-            <input type="number" name="variants[${index}][stock]" class="form-control" placeholder="Stock" value="0" min="0" required>
+            <input type="number" name="variants[${index}][stock_quantity]" class="form-control" placeholder="Stock" value="0" min="0" required>
         </div>
         <div class="col-md-2">
             <input type="number" step="0.01" name="variants[${index}][price_modifier]" class="form-control" placeholder="Price ±" value="0">
