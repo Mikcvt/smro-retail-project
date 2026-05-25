@@ -83,7 +83,7 @@
                             <input type="text" name="variants[0][sku]" class="form-control" placeholder="SKU" required>
                         </div>
                         <div class="col-md-2">
-                            <input type="number" name="variants[0][stock]" class="form-control" placeholder="Stock" value="0" min="0" required>
+                            <input type="number" name="variants[0][stock_quantity]" class="form-control" placeholder="Stock" value="0" min="0" required>
                         </div>
                         <div class="col-md-2">
                             <input type="number" step="0.01" name="variants[0][price_modifier]" class="form-control" placeholder="Price ±" value="0">
@@ -124,7 +124,7 @@ document.getElementById('add-variant').addEventListener('click', function() {
             <input type="text" name="variants[${index}][sku]" class="form-control" placeholder="SKU" required>
         </div>
         <div class="col-md-2">
-            <input type="number" name="variants[${index}][stock]" class="form-control" placeholder="Stock" value="0" min="0" required>
+            <input type="number" name="variants[${index}][stock_quantity]" class="form-control" placeholder="Stock" value="0" min="0" required>
         </div>
         <div class="col-md-2">
             <input type="number" step="0.01" name="variants[${index}][price_modifier]" class="form-control" placeholder="Price ±" value="0">

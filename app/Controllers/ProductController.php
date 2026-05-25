@@ -107,7 +107,7 @@ class ProductController extends BaseController
     {
         $this->requireManagerOrAbove();
 
-        return view('products/form', [
+        return view('products/create', [
             'product'    => null,
             'variants'   => [],
             'categories' => $this->categoryModel->findAll(),
@@ -134,7 +134,7 @@ class ProductController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            return view('products/form', [
+            return view('products/create', [
                 'product'    => null,
                 'variants'   => $this->request->getPost('variants') ?? [],
                 'categories' => $this->categoryModel->findAll(),
@@ -208,7 +208,7 @@ class ProductController extends BaseController
             ->orderBy('size')->orderBy('color')
             ->findAll();
 
-        return view('products/form', [
+        return view('products/create', [
             'product'    => $product,
             'variants'   => $variants,
             'categories' => $this->categoryModel->findAll(),
@@ -241,7 +241,7 @@ class ProductController extends BaseController
 
         if (!$this->validate($rules)) {
             $variants = $this->variantModel->where('product_id', $id)->findAll();
-            return view('products/form', [
+            return view('products/create', [
                 'product'    => $product,
                 'variants'   => $variants,
                 'categories' => $this->categoryModel->findAll(),

@@ -48,12 +48,13 @@ class AuthController extends BaseController
             $rules = [
                 'name'             => 'required|min_length[2]|max_length[255]',
                 'email'            => 'required|valid_email|is_unique[users.email]',
+                'role'             => 'required|in_list[superadmin,manager,staff]',
                 'password'         => 'required|min_length[8]',
                 'confirm_password' => 'required|matches[password]'
             ];
 
             if (!$this->validate($rules)) {
-                return view('auth/register', ['validation' => $this->validator]);
+                return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
             }
 
             $userModel = new UserModel();
@@ -61,7 +62,7 @@ class AuthController extends BaseController
                 'name'          => $this->request->getPost('name'),
                 'email'         => $this->request->getPost('email'),
                 'password_hash' => $this->request->getPost('password'),
-                'role'          => 'staff',
+                'role'          => $this->request->getPost('role'),
                 'is_active'     => 1
             ];
 

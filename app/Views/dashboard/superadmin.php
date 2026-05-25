@@ -1,80 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAdmin Dashboard - SMRO</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        .navbar-custom {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .dashboard-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            background: rgba(30, 41, 59, 0.8);
-        }
-        .role-badge {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            font-weight: 500;
-        }
-    </style>
-</head>
-<body>
+<?= $this->extend('layouts/main') ?>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="#">SMRO Retail</a>
-        <div class="d-flex align-items-center">
-            <span class="me-3 text-muted">Hello, <?= esc(session()->get('name')) ?></span>
-            <a href="<?= base_url('logout') ?>" class="btn btn-outline-light btn-sm rounded-pill px-3">Sign Out</a>
+<?= $this->section('content') ?>
+<div class="container-fluid">
+    <h2 class="fw-bold mb-1">Welcome, <?= esc(session('name')) ?> <span class="badge bg-danger ms-2" style="font-size:0.6em">SuperAdmin</span></h2>
+    <p class="text-muted mb-4">Manage the entire retail ecosystem from here.</p>
+
+    <?= $this->include('partials/_alerts') ?>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <a href="<?= site_url('products') ?>" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-3"><i class="bi bi-box-seam fs-4 text-primary"></i></div>
+                        <div><div class="text-muted small">Products</div><div class="fw-bold fs-5">Inventory</div></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="<?= site_url('sales') ?>" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="bg-success bg-opacity-10 rounded p-3"><i class="bi bi-cart3 fs-4 text-success"></i></div>
+                        <div><div class="text-muted small">Sales</div><div class="fw-bold fs-5">Transactions</div></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="<?= site_url('returns') ?>" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="bg-warning bg-opacity-10 rounded p-3"><i class="bi bi-arrow-return-left fs-4 text-warning"></i></div>
+                        <div><div class="text-muted small">Returns</div><div class="fw-bold fs-5">Management</div></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="<?= site_url('sales/create') ?>" class="text-decoration-none">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="bg-info bg-opacity-10 rounded p-3"><i class="bi bi-plus-circle fs-4 text-info"></i></div>
+                        <div><div class="text-muted small">Quick</div><div class="fw-bold fs-5">New Sale</div></div>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
-</nav>
 
-<div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="fw-bold">Welcome Back, <span class="badge role-badge ms-2">SuperAdmin</span></h2>
-            <p class="text-muted">Manage the entire retail ecosystem from here.</p>
-        </div>
-    </div>
-    
     <div class="row g-4">
         <div class="col-md-4">
-            <div class="dashboard-card p-4 h-100">
-                <h5 class="fw-bold text-white mb-3">System Settings</h5>
-                <p class="text-muted mb-0">Configure global platform configurations and preferences.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="dashboard-card p-4 h-100">
-                <h5 class="fw-bold text-white mb-3">User Management</h5>
-                <p class="text-muted mb-0">Manage roles, permissions, and account statuses.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="dashboard-card p-4 h-100">
-                <h5 class="fw-bold text-white mb-3">Audit Logs</h5>
-                <p class="text-muted mb-0">Review system activity and security events.</p>
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <div class="d-grid gap-2">
+                        <a href="<?= site_url('products/new') ?>" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus"></i> Add Product</a>
+                        <a href="<?= site_url('sales/create') ?>" class="btn btn-outline-success btn-sm"><i class="bi bi-cart-plus"></i> New Sale</a>
+                        <a href="<?= site_url('returns/create') ?>" class="btn btn-outline-warning btn-sm"><i class="bi bi-arrow-return-left"></i> Process Return</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-</body>
-</html>
+<?= $this->endSection() ?>

@@ -72,8 +72,9 @@
                                             <td>₱<?= number_format((float)$product['base_price'] + (float)$v['price_modifier'], 2) ?></td>
                                             <?php if (in_array(session('role'), ['superadmin', 'manager', 'staff'], true)): ?>
                                                 <td>
-                                                    <form action="<?= site_url('products/adjust-stock/' . $v['id']) ?>" method="post" class="d-flex gap-1">
+                                                    <form action="<?= site_url('products/' . $product['id'] . '/stock') ?>" method="post" class="d-flex gap-1">
                                                         <?= csrf_field() ?>
+                                                        <input type="hidden" name="variant_id" value="<?= $v['id'] ?>">
                                                         <input type="number" name="stock_quantity" class="form-control form-control-sm" 
                                                                value="<?= $v['stock_quantity'] ?>" min="0" style="width: 70px;">
                                                         <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
