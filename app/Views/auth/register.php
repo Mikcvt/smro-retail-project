@@ -124,33 +124,33 @@
             
             <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
-                <input type="text" name="name" class="form-control <?= validation_show_error('name') ? 'is-invalid' : '' ?>" id="name" value="<?= esc(old('name')) ?>" placeholder="John Doe">
+                <input type="text" name="name" class="form-control <?= session('errors.name') ? 'is-invalid' : '' ?>" id="name" value="<?= esc(old('name')) ?>" placeholder="John Doe">
                 <div class="invalid-feedback">
-                    <?= validation_show_error('name') ?>
+                    <?= session('errors.name') ?>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control <?= validation_show_error('email') ? 'is-invalid' : '' ?>" id="email" value="<?= esc(old('email')) ?>" placeholder="john@example.com">
+                <input type="email" name="email" class="form-control <?= session('errors.email') ? 'is-invalid' : '' ?>" id="email" value="<?= esc(old('email')) ?>" placeholder="john@example.com">
                 <div class="invalid-feedback">
-                    <?= validation_show_error('email') ?>
+                    <?= session('errors.email') ?>
                 </div>
             </div>
             
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control <?= validation_show_error('password') ? 'is-invalid' : '' ?>" id="password" placeholder="••••••••">
+                <input type="password" name="password" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" id="password" placeholder="••••••••">
                 <div class="invalid-feedback">
-                    <?= validation_show_error('password') ?>
+                    <?= session('errors.password') ?>
                 </div>
             </div>
 
             <div class="mb-4">
                 <label for="confirm_password" class="form-label">Confirm Password</label>
-                <input type="password" name="confirm_password" class="form-control <?= validation_show_error('confirm_password') ? 'is-invalid' : '' ?>" id="confirm_password" placeholder="••••••••">
+                <input type="password" name="confirm_password" class="form-control <?= session('errors.confirm_password') ? 'is-invalid' : '' ?>" id="confirm_password" placeholder="••••••••">
                 <div class="invalid-feedback">
-                    <?= validation_show_error('confirm_password') ?>
+                    <?= session('errors.confirm_password') ?>
                 </div>
             </div>
             
