@@ -11,6 +11,10 @@ class AuthController extends BaseController
 {
     public function login()
     {
+        if (session()->get('is_logged_in')) {
+            return redirect()->to(site_url('dashboard'));
+        }
+
         if ($this->request->is('post')) {
             $rules = [
                 'email'    => 'required|valid_email',
@@ -22,18 +26,25 @@ class AuthController extends BaseController
             }
 
             $userModel = new UserModel();
-            $user = $userModel->where('email', $this->request->getPost('email'))->first();
+            $user = $userModel->where('email', $this->request->getPost('email'))
+                              ->where('is_active', 1)
+                              ->first();
 
-            if ($user && password_verify((string)$this->request->getPost('password'), $user['password_hash'])) {
+            if ($user && password_verify((string) $this->request->getPost('password'), $user['password_hash'])) {
+                $fullName = !empty($user['firstname'])
+                    ? $user['firstname'] . ' ' . $user['lastname']
+                    : $user['name'];
+
                 session()->set([
                     'user_id'      => $user['id'],
-                    'name'         => $user['name'],
+                    'name'         => $fullName,
+                    'firstname'    => $user['firstname'] ?? '',
                     'email'        => $user['email'],
                     'role'         => $user['role'],
                     'is_logged_in' => true,
                 ]);
 
-                return redirect()->to('/dashboard');
+                return redirect()->to(site_url('dashboard'));
             }
 
             return redirect()->back()->withInput()->with('error', 'Invalid email or password.');
@@ -42,48 +53,16 @@ class AuthController extends BaseController
         return view('auth/login');
     }
 
-    public function register()
-    {
-        if ($this->request->is('post')) {
-            $rules = [
-                'name'             => 'required|min_length[2]|max_length[255]',
-                'email'            => 'required|valid_email|is_unique[users.email]',
-                'role'             => 'required|in_list[superadmin,manager,staff]',
-                'password'         => 'required|min_length[8]',
-                'confirm_password' => 'required|matches[password]'
-            ];
-
-            if (!$this->validate($rules)) {
-                return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-            }
-
-            $userModel = new UserModel();
-            $data = [
-                'name'          => $this->request->getPost('name'),
-                'email'         => $this->request->getPost('email'),
-                'password_hash' => $this->request->getPost('password'),
-                'role'          => $this->request->getPost('role'),
-                'is_active'     => 1
-            ];
-
-            $userModel->insert($data);
-
-            return redirect()->to('/login')->with('success', 'Registration successful. Please log in.');
-        }
-
-        return view('auth/register');
-    }
-
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login');
+        return redirect()->to(site_url('login'));
     }
 
     public function dashboard()
     {
         if (!session()->get('is_logged_in')) {
-            return redirect()->to('/login');
+            return redirect()->to(site_url('login'));
         }
 
         $role = session()->get('role');
@@ -96,6 +75,6 @@ class AuthController extends BaseController
             return view('dashboard/staff');
         }
 
-        return redirect()->to('/login')->with('error', 'Invalid role.');
+        return redirect()->to(site_url('login'))->with('error', 'Invalid role.');
     }
 }

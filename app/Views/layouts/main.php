@@ -69,6 +69,18 @@
 
             document.body.classList.toggle('smro-sidebar-collapsed');
         });
+
+        // JS fallback: force-scroll sidebar on wheel events when native scrolling is blocked
+        const sidebarScrollAreas = document.querySelectorAll('.smro-sidebar-scrollable');
+        sidebarScrollAreas.forEach(el => {
+            el.addEventListener('wheel', function (e) {
+                // If the element can scroll, consume the wheel and scroll it manually
+                if (el.scrollHeight > el.clientHeight) {
+                    e.preventDefault();
+                    el.scrollTop += e.deltaY;
+                }
+            }, { passive: false });
+        });
     });
 </script>
 <?= $this->renderSection('scripts') ?>

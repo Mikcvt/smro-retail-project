@@ -51,7 +51,7 @@ class Filters extends BaseFilters
 
     public array $filters = [
         'csrf' => [
-            'before' => ['login', 'register', 'sales*', 'returns*', 'products*'],
+            'before' => ['login', 'register', 'sales*', 'returns*', 'products*', 'users*', 'profile*'],
         ],
     ];
 }

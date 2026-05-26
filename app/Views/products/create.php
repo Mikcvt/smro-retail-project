@@ -1,6 +1,9 @@
 <?php
 /**
  * @var array $categories
+ * @var array $variants
+ * @var array|null $product
+ * @var bool $isEdit
  * @var \CodeIgniter\Validation\Validation $validation
  */
 ?>
@@ -8,20 +11,23 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid">
-    <h2 class="mb-4">Add New Product</h2>
+    <h2 class="mb-4"><?= $isEdit ? 'Edit Product' : 'Add New Product' ?></h2>
 
     <?= $this->include('partials/_alerts') ?>
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form action="<?= site_url('products') ?>" method="post" enctype="multipart/form-data">
+            <form action="<?= site_url($isEdit ? 'products/' . $product['id'] : 'products') ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field() ?>
+                <?php if ($isEdit): ?>
+                    <input type="hidden" name="_method" value="PUT">
+                <?php endif; ?>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Product Name</label>
-                        <input type="text" name="name" class="form-control <?= session('errors.name') ? 'is-invalid' : '' ?>" 
-                               value="<?= old('name') ?>" required>
+                        <input type="text" name="name" class="form-control <?= session('errors.name') ? 'is-invalid' : '' ?>"
+                               value="<?= esc(old('name', $product['name'] ?? '')) ?>" required>
                         <div class="invalid-feedback"><?= session('errors.name') ?></div>
                     </div>
 
@@ -30,7 +36,7 @@
                         <select name="category_id" class="form-select <?= session('errors.category_id') ? 'is-invalid' : '' ?>" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
-                                <option value="<?= $cat['id'] ?>" <?= old('category_id') == $cat['id'] ? 'selected' : '' ?>>
+                                <option value="<?= $cat['id'] ?>" <?= old('category_id', $product['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>>
                                     <?= esc($cat['name']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -40,29 +46,37 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Brand</label>
-                        <input type="text" name="brand" class="form-control <?= session('errors.brand') ? 'is-invalid' : '' ?>" 
-                               value="<?= old('brand') ?>" required>
+                        <input type="text" name="brand" class="form-control <?= session('errors.brand') ? 'is-invalid' : '' ?>"
+                               value="<?= esc(old('brand', $product['brand'] ?? '')) ?>" required>
                         <div class="invalid-feedback"><?= session('errors.brand') ?></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Base Price (₱)</label>
-                        <input type="number" step="0.01" name="base_price" class="form-control <?= session('errors.base_price') ? 'is-invalid' : '' ?>" 
-                               value="<?= old('base_price') ?>" required>
+                        <input type="number" step="0.01" name="base_price" class="form-control <?= session('errors.base_price') ? 'is-invalid' : '' ?>"
+                               value="<?= esc(old('base_price', $product['base_price'] ?? '')) ?>" required>
                         <div class="invalid-feedback"><?= session('errors.base_price') ?></div>
                     </div>
 
                     <div class="col-12 mb-3">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="3"><?= old('description') ?></textarea>
+                        <textarea name="description" class="form-control" rows="3"><?= esc(old('description', $product['description'] ?? '')) ?></textarea>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Product Image</label>
-                        <input type="file" name="image" class="form-control <?= session('errors.image') ? 'is-invalid' : '' ?>" 
+                        <input type="file" name="image" class="form-control <?= session('errors.image') ? 'is-invalid' : '' ?>"
                                accept="image/jpeg,image/png,image/webp">
                         <div class="form-text">Max 2MB. JPG, PNG, or WEBP only.</div>
                         <div class="invalid-feedback"><?= session('errors.image') ?></div>
+                        <?php if ($isEdit && !empty($product['image_path'])): ?>
+                            <div class="mt-3">
+                                <label class="form-label small text-muted">Current image</label>
+                                <div class="border rounded overflow-hidden" style="width:120px; height:120px;">
+                                    <img src="<?= base_url('uploads/' . $product['image_path']) ?>" alt="Current image" class="w-100 h-100" style="object-fit:cover;">
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -72,26 +86,39 @@
                 <p class="text-muted small">Add size/color combinations. Each variant must have a unique SKU.</p>
 
                 <div id="variants-container">
-                    <div class="variant-row row g-2 mb-2 border rounded p-2 bg-light">
-                        <div class="col-md-2">
-                            <input type="text" name="variants[0][size]" class="form-control" placeholder="Size (S, M, L)" value="M" required>
+                    <?php
+                        $variantRows = service('request')->getPost('variants') ?? ($variants ?? []);
+                        if (empty($variantRows)) {
+                            $variantRows = [['size' => '', 'color' => '', 'sku' => '', 'stock_quantity' => 0, 'price_modifier' => 0]];
+                        }
+                    ?>
+                    <?php foreach ($variantRows as $index => $row): ?>
+                        <div class="variant-row row g-2 mb-2 border rounded p-2 bg-secondary bg-opacity-10">
+                            <div class="col-md-2">
+                                <input type="text" name="variants[<?= $index ?>][size]" class="form-control" placeholder="Size"
+                                       value="<?= esc($row['size'] ?? '') ?>" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" name="variants[<?= $index ?>][color]" class="form-control" placeholder="Color"
+                                       value="<?= esc($row['color'] ?? '') ?>" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="variants[<?= $index ?>][sku]" class="form-control" placeholder="SKU"
+                                       value="<?= esc($row['sku'] ?? '') ?>" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" name="variants[<?= $index ?>][stock_quantity]" class="form-control" placeholder="Stock"
+                                       value="<?= esc($row['stock_quantity'] ?? 0) ?>" min="0" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" step="0.01" name="variants[<?= $index ?>][price_modifier]" class="form-control" placeholder="Price ±"
+                                       value="<?= esc($row['price_modifier'] ?? 0) ?>">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm remove-variant" <?= count($variantRows) === 1 ? 'disabled' : '' ?>>×</button>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <input type="text" name="variants[0][color]" class="form-control" placeholder="Color" value="Black" required>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" name="variants[0][sku]" class="form-control" placeholder="SKU" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" name="variants[0][stock_quantity]" class="form-control" placeholder="Stock" value="0" min="0" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" step="0.01" name="variants[0][price_modifier]" class="form-control" placeholder="Price ±" value="0">
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-outline-danger btn-sm remove-variant" disabled>×</button>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
 
                 <button type="button" class="btn btn-outline-secondary btn-sm mb-4" id="add-variant">
@@ -99,7 +126,9 @@
                 </button>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Save Product</button>
+                    <button type="submit" class="btn btn-primary">
+                        <?= $isEdit ? 'Update Product' : 'Save Product' ?>
+                    </button>
                     <a href="<?= site_url('products') ?>" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
@@ -112,7 +141,7 @@ document.getElementById('add-variant').addEventListener('click', function() {
     const container = document.getElementById('variants-container');
     const index = container.children.length;
     const row = document.createElement('div');
-    row.className = 'variant-row row g-2 mb-2 border rounded p-2 bg-light';
+    row.className = 'variant-row row g-2 mb-2 border rounded p-2 bg-secondary bg-opacity-10';
     row.innerHTML = `
         <div class="col-md-2">
             <input type="text" name="variants[${index}][size]" class="form-control" placeholder="Size" required>

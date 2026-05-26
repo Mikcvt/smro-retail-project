@@ -65,15 +65,7 @@ $initials  = strtoupper(
     <!-- Right: User info dropdown -->
     <div class="d-flex align-items-center ms-auto gap-2">
 
-        <!-- Optional: global search trigger (placeholder) -->
-        <button
-            class="btn btn-sm btn-outline-secondary d-none d-md-inline-flex"
-            type="button"
-            title="Search"
-            aria-label="Quick search"
-        >
-            <i class="bi bi-search"></i>
-        </button>
+        <!-- Global search removed (not implemented) -->
 
         <!-- User dropdown -->
         <div class="dropdown">

@@ -19,11 +19,17 @@ class UserModel extends Model
     protected $updatedField = 'updated_at';
 
     protected $allowedFields = [
+        'firstname',
+        'lastname',
         'name',
         'email',
         'password_hash',
         'role',
         'is_active',
+        'age',
+        'contact_no',
+        'address',
+        'profile_image',
     ];
 
     /**

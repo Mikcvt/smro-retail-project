@@ -1,278 +1,164 @@
+<?= $this->extend('layouts/main') ?>
+<?= $this->section('title') ?>Dashboard<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
 <?php
-$this->extend('layouts/main');
-$this->section('title');
-echo 'Manager Dashboard';
-$this->endSection();
+use App\Models\SaleModel;
+use App\Models\ProductModel;
+use App\Models\UserModel;
+use App\Models\ReturnModel;
 
-$this->section('content');
+$saleModel    = new SaleModel();
+$productModel = new ProductModel();
+$userModel    = new UserModel();
+$returnModel  = new ReturnModel();
 
-$salesToday       = $salesToday       ?? 0;
-$pendingReturns   = $pendingReturns   ?? 0;
-$revenueThisMonth = $revenueThisMonth ?? 0.0;
-$recentSales      = $recentSales      ?? [];
-$topProducts      = $topProducts      ?? [];
+$totalProducts = $productModel->where('is_active', 1)->countAllResults();
+$todayRevenue  = $saleModel->where('status', 'completed')->where('DATE(created_at)', date('Y-m-d'))->selectSum('total_amount')->first()['total_amount'] ?? 0;
+$totalUsers    = $userModel->where('is_active', 1)->countAllResults();
+$pendingReturns = $returnModel->where('status', 'pending')->countAllResults();
+
+$recentSales = $saleModel
+    ->select('sales.*, users.name as cashier_name')
+    ->join('users', 'users.id = sales.user_id', 'left')
+    ->orderBy('sales.id', 'DESC')
+    ->limit(5)
+    ->findAll();
 ?>
 
-<style>
-/* ===== DASHBOARD LAYOUT FIX ===== */
-.smro-page-title {
-    font-weight: 700;
-    font-size: 1.25rem;
-}
-
-.smro-subtitle {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-/* ===== METRIC CARDS ===== */
-.smro-metric-card {
-    border-radius: 14px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.smro-metric-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-}
-
-.smro-metric-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.smro-metric-label {
-    font-size: 0.75rem;
-    color: #6c757d;
-}
-
-.smro-metric-value {
-    font-size: 1.4rem;
-    font-weight: 700;
-}
-
-/* ===== TABLE CARD ===== */
-.card {
-    border-radius: 14px;
-}
-
-.table th {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #6c757d;
-}
-
-.table td {
-    font-size: 0.9rem;
-}
-
-/* ===== TOP PRODUCTS ===== */
-.smro-rank-badge {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.8rem;
-}
-
-.smro-rank-gold { background: #ffd70033; color: #b8860b; }
-.smro-rank-silver { background: #c0c0c033; color: #666; }
-.smro-rank-bronze { background: #cd7f3233; color: #8b5a2b; }
-.smro-rank-default { background: #e9ecef; color: #495057; }
-</style>
-
-<!-- HEADER -->
-<div class="d-flex flex-wrap justify-content-between align-items-start mb-4 gap-3">
-
-    <div>
-        <div class="smro-page-title">
-            <i class="bi bi-bar-chart-line-fill text-warning me-1"></i>
-            Superadmin Dashboard
-        </div>
-
-        <div class="smro-subtitle">
-            Operations overview • <?= esc(date('l, F j, Y')) ?>
-        </div>
-    </div>
-
-    <div class="d-flex gap-2">
-        <a href="<?= base_url('/reports') ?>" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-file-earmark-bar-graph me-1"></i> Reports
-        </a>
-
-        <a href="<?= base_url('/sales/create') ?>" class="btn btn-sm btn-warning fw-semibold">
-            <i class="bi bi-cart-plus-fill me-1"></i> New Sale
-        </a>
-    </div>
-
-</div>
-
-<!-- METRICS -->
+<!-- Metric Cards -->
 <div class="row g-3 mb-4">
-
-    <div class="col-12 col-md-4">
-        <div class="card smro-metric-card border-0 shadow-sm">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="smro-metric-icon bg-success-subtle text-success">
-                    <i class="bi bi-cart-check-fill fs-5"></i>
-                </div>
-                <div>
-                    <div class="smro-metric-label">Sales Today</div>
-                    <div class="smro-metric-value"><?= number_format($salesToday) ?></div>
-                </div>
+    <div class="col-6 col-lg-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Products</div>
+                <div class="fw-bold fs-3"><?= number_format($totalProducts) ?></div>
+                <div class="small text-success mt-1"><i class="bi bi-box-seam me-1"></i>Active items</div>
             </div>
         </div>
     </div>
-
-    <div class="col-12 col-md-4">
-        <div class="card smro-metric-card border-0 shadow-sm <?= $pendingReturns > 0 ? 'border border-danger-subtle' : '' ?>">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="smro-metric-icon <?= $pendingReturns > 0 ? 'bg-danger-subtle text-danger' : 'bg-secondary-subtle text-secondary' ?>">
-                    <i class="bi bi-arrow-return-left fs-5"></i>
-                </div>
-
-                <div class="flex-grow-1">
-                    <div class="smro-metric-label">Pending Returns</div>
-                    <div class="smro-metric-value">
-                        <?= number_format($pendingReturns) ?>
-                    </div>
-                </div>
-
-                <?php if ($pendingReturns > 0): ?>
-                    <a href="<?= base_url('/returns?status=pending') ?>" class="btn btn-sm btn-outline-danger">
-                        View
-                    </a>
-                <?php endif; ?>
+    <div class="col-6 col-lg-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Today</div>
+                <div class="fw-bold fs-3">₱<?= number_format((float)$todayRevenue, 0) ?></div>
+                <div class="small text-success mt-1"><i class="bi bi-graph-up me-1"></i>Revenue today</div>
             </div>
         </div>
     </div>
-
-    <div class="col-12 col-md-4">
-        <div class="card smro-metric-card border-0 shadow-sm">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="smro-metric-icon bg-primary-subtle text-primary">
-                    <i class="bi bi-cash-coin fs-5"></i>
-                </div>
-                <div>
-                    <div class="smro-metric-label">Revenue This Month</div>
-                    <div class="smro-metric-value">
-                        ₱<?= number_format($revenueThisMonth, 2) ?>
-                    </div>
-                </div>
+    <div class="col-6 col-lg-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Users</div>
+                <div class="fw-bold fs-3"><?= number_format($totalUsers) ?></div>
+                <div class="small text-info mt-1"><i class="bi bi-people me-1"></i>Active accounts</div>
             </div>
         </div>
     </div>
-
+    <div class="col-6 col-lg-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Alerts</div>
+                <div class="fw-bold fs-3 <?= $pendingReturns > 0 ? 'text-warning' : '' ?>"><?= $pendingReturns ?></div>
+                <div class="small text-warning mt-1"><i class="bi bi-exclamation-triangle me-1"></i>Pending returns</div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- TABLES -->
-<div class="row g-3">
-
-    <!-- RECENT SALES -->
-    <div class="col-12 col-lg-7">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <strong><i class="bi bi-clock-history text-warning me-1"></i> Recent Sales</strong>
-                <a href="<?= base_url('/sales') ?>" class="btn btn-sm btn-outline-warning">View All</a>
+<div class="row g-4">
+    <!-- Recent Sales -->
+    <div class="col-lg-7">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Recent Sales (Today)</h6>
+                <a href="<?= site_url('sales') ?>" class="small text-primary">View all →</a>
             </div>
-
             <div class="card-body p-0">
-
-                <?php if (empty($recentSales)) : ?>
-                    <div class="p-4 text-center text-muted">
-                        <i class="bi bi-cart-x fs-2"></i>
-                        <div class="mt-2">No sales today</div>
-                    </div>
-                <?php else : ?>
-
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead>
+                    <table class="table table-dark table-hover align-middle mb-0 small">
+                        <thead class="border-bottom border-secondary">
                             <tr>
-                                <th>#</th>
-                                <th>Product</th>
-                                <th class="text-center">Qty</th>
-                                <th class="text-end">Amount</th>
-                                <th>Staff</th>
+                                <th class="px-3 py-2">Ref #</th>
+                                <th>Cashier</th>
+                                <th>Amount</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($recentSales as $sale): ?>
+                            <?php if (empty($recentSales)): ?>
+                                <tr><td colspan="4" class="text-center py-4 text-muted">No sales yet today.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($recentSales as $sale): ?>
                                 <tr>
-                                    <td class="text-muted small"><?= esc($sale['id']) ?></td>
-                                    <td><?= esc($sale['product_name']) ?></td>
-                                    <td class="text-center"><?= esc($sale['quantity']) ?></td>
-                                    <td class="text-end text-success fw-semibold">
-                                        ₱<?= number_format((float)$sale['total_amount'], 2) ?>
+                                    <td class="px-3"><code class="text-primary"><?= esc($sale['reference_no']) ?></code></td>
+                                    <td><?= esc($sale['cashier_name'] ?? '—') ?></td>
+                                    <td>₱<?= number_format((float)$sale['total_amount'], 2) ?></td>
+                                    <td>
+                                        <?php $sc = match($sale['status']) { 'completed' => 'success', 'returned' => 'warning', default => 'danger' }; ?>
+                                        <span class="badge bg-<?= $sc ?>"><?= ucfirst($sale['status']) ?></span>
                                     </td>
-                                    <td class="text-muted small"><?= esc($sale['staff_name']) ?></td>
                                 </tr>
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
-
-                <?php endif; ?>
-
             </div>
         </div>
     </div>
 
-    <!-- TOP PRODUCTS -->
-    <div class="col-12 col-lg-5">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white">
-                <strong><i class="bi bi-trophy-fill text-warning me-1"></i> Top Products</strong>
-            </div>
-
-            <div class="card-body p-0">
-
-                <?php if (empty($topProducts)) : ?>
-                    <div class="p-4 text-center text-muted">
-                        <i class="bi bi-trophy fs-2"></i>
-                        <div class="mt-2">No data yet</div>
+    <!-- Quick Links -->
+    <div class="col-lg-5">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-header border-secondary"><h6 class="mb-0">Quick Links</h6></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a href="<?= site_url('sales/create') ?>" class="card bg-dark border-secondary text-decoration-none h-100 d-block p-3 text-center" style="border-color:rgba(99,102,241,0.3)!important">
+                            <i class="bi bi-cart-plus fs-4 text-primary d-block mb-2"></i>
+                            <div class="small fw-semibold">New Sale</div>
+                            <div class="text-muted" style="font-size:.75rem">Record a transaction</div>
+                        </a>
                     </div>
-                <?php else : ?>
-
-                <ul class="list-group list-group-flush">
-                    <?php foreach ($topProducts as $rank => $product): ?>
-                        <li class="list-group-item d-flex align-items-center gap-3">
-                            
-                            <div class="smro-rank-badge smro-rank-default">
-                                <?= $rank + 1 ?>
-                            </div>
-
-                            <div class="flex-grow-1">
-                                <div class="fw-semibold">
-                                    <?= esc($product['product_name']) ?>
-                                </div>
-                                <div class="text-muted small">
-                                    <?= number_format($product['total_sold']) ?> sold
-                                </div>
-                            </div>
-
-                            <div class="text-success fw-semibold small">
-                                ₱<?= number_format((float)$product['total_revenue'], 2) ?>
-                            </div>
-
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-
-                <?php endif; ?>
-
+                    <div class="col-6">
+                        <a href="<?= site_url('products/new') ?>" class="card bg-dark border-secondary text-decoration-none h-100 d-block p-3 text-center" style="border-color:rgba(16,185,129,0.3)!important">
+                            <i class="bi bi-plus-circle fs-4 text-success d-block mb-2"></i>
+                            <div class="small fw-semibold">Add Product</div>
+                            <div class="text-muted" style="font-size:.75rem">New inventory item</div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?= site_url('users') ?>" class="card bg-dark border-secondary text-decoration-none h-100 d-block p-3 text-center" style="border-color:rgba(245,158,11,0.3)!important">
+                            <i class="bi bi-people fs-4 text-warning d-block mb-2"></i>
+                            <div class="small fw-semibold">Manage Users</div>
+                            <div class="text-muted" style="font-size:.75rem">Roles & accounts</div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?= site_url('reports') ?>" class="card bg-dark border-secondary text-decoration-none h-100 d-block p-3 text-center" style="border-color:rgba(59,130,246,0.3)!important">
+                            <i class="bi bi-bar-chart-line fs-4 text-info d-block mb-2"></i>
+                            <div class="small fw-semibold">View Reports</div>
+                            <div class="text-muted" style="font-size:.75rem">Sales analytics</div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?= site_url('settings') ?>" class="card bg-dark border-secondary text-decoration-none h-100 d-block p-3 text-center">
+                            <i class="bi bi-gear fs-4 text-secondary d-block mb-2"></i>
+                            <div class="small fw-semibold">Settings</div>
+                            <div class="text-muted" style="font-size:.75rem">System config</div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="<?= site_url('reports/export') ?>" class="card bg-dark border-secondary text-decoration-none h-100 d-block p-3 text-center">
+                            <i class="bi bi-download fs-4 text-secondary d-block mb-2"></i>
+                            <div class="small fw-semibold">Export Data</div>
+                            <div class="text-muted" style="font-size:.75rem">CSV / PDF</div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
-
-<?php $this->endSection(); ?>
+<?= $this->endSection() ?>

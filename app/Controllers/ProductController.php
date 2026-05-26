@@ -59,7 +59,8 @@ class ProductController extends BaseController
         // Build the query dynamically.
         $builder = $this->productModel
             ->select('products.*, categories.name AS category_name,
-                      COALESCE(SUM(product_variants.stock_quantity), 0) AS total_stock')
+                      COALESCE(SUM(product_variants.stock_quantity), 0) AS total_stock,
+                      COUNT(product_variants.id) AS variant_count')
             ->join('categories', 'categories.id = products.category_id', 'left')
             ->join('product_variants', 'product_variants.product_id = products.id', 'left')
             ->where('products.is_active', 1)
@@ -360,17 +361,25 @@ class ProductController extends BaseController
         $fullPath  = $uploadDir . $newName;
         $thumbPath = $thumbDir  . $newName;
 
-        // Resize main image to 800×800 (maintain aspect ratio).
-        \Config\Services::image()
-            ->withFile($fullPath)
-            ->fit(800, 800, 'center')
-            ->save($fullPath);
+        try {
+            // Resize main image to 800×800 (maintain aspect ratio).
+            \Config\Services::image()
+                ->withFile($fullPath)
+                ->fit(800, 800, 'center')
+                ->save($fullPath);
 
-        // Create 200×200 thumbnail.
-        \Config\Services::image()
-            ->withFile($fullPath)
-            ->fit(200, 200, 'center')
-            ->save($thumbPath);
+            // Create 200×200 thumbnail.
+            \Config\Services::image()
+                ->withFile($fullPath)
+                ->fit(200, 200, 'center')
+                ->save($thumbPath);
+        } catch (\Throwable $e) {
+            // If image processing fails (missing GD/imagick), keep the original upload.
+            // This allows the upload to succeed without resizing.
+            if (file_exists($thumbPath)) {
+                @unlink($thumbPath);
+            }
+        }
 
         // Remove old image + thumbnail if replacing.
         if ($oldPath !== null && $oldPath !== '') {

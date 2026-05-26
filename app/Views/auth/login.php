@@ -147,10 +147,7 @@
             </div>
         </form>
 
-        <div class="text-center">
-            <span class="text-white">Don't have an account?</span> 
-            <a href="<?= base_url('register') ?>" class="auth-link">Register here</a>
-        </div>
+        <!-- Registration closed: Superadmin creates staff/manager accounts -->
     </div>
 
 </body>

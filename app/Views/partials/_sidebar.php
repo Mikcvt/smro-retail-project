@@ -48,9 +48,8 @@ function smroNavLink(string $href, string $icon, string $label, string $badge = 
     $linkPath    = '/' . ltrim(parse_url($url, PHP_URL_PATH), '/');
 
 
-    // Active when exact match OR child path
-    $isActive    = ($currentPath === $linkPath)
-                || str_starts_with($currentPath, rtrim($linkPath, '/') . '/');
+    // Active only when exact match
+    $isActive    = ($currentPath === $linkPath);
 
 
     $activeClass = $isActive ? ' active' : '';
@@ -164,33 +163,10 @@ function smroNavSection(string $label): void
         <?php endif; ?>
 
 
-        <!-- ── Bottom utility links ──────────────────────────────────────── -->
+        <!-- ── Bottom utility links removed from sidebar (available in user dropdown) -->
         <li class="smro-nav-divider border-top border-secondary border-opacity-25 my-2"></li>
 
-
-        <?php smroNavLink('profile',  'bi-person-circle', 'My Profile') ?>
         <?php smroNavLink('support',  'bi-question-circle', 'Help & Support') ?>
-
-
-        <!-- Logout — POST form disguised as a nav item for CSRF safety -->
-        <li class="smro-nav-item">
-            <form
-                action="<?= base_url('logout') ?>"
-                method="post"
-                class="m-0"
-                id="smroLogoutForm"
-            >
-                <?= csrf_field() ?>
-                <button
-                    type="submit"
-                    class="smro-nav-link smro-nav-link--logout d-flex align-items-center gap-2 px-4 py-2 text-decoration-none w-100 border-0 bg-transparent text-start"
-                    aria-label="Log out of SMRO"
-                >
-                    <i class="bi bi-box-arrow-right smro-nav-icon flex-shrink-0" aria-hidden="true"></i>
-                    <span class="smro-nav-label">Log Out</span>
-                </button>
-            </form>
-        </li>
         </ul>
     </div>
 

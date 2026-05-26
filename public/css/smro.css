@@ -377,12 +377,19 @@ body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link .smro-nav-label {
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1 1 auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,.12) transparent;
+    -webkit-overflow-scrolling: touch;
+    /* Ensure the scrollable area has a constrained height so scrolling works reliably */
+    max-height: calc(100vh - 110px); /* account for brand + footer */
+    position: relative;
+    pointer-events: auto;
+    scrollbar-width: none; /* Firefox: hide bar but allow scrolling */
+    -ms-overflow-style: -ms-autohiding-scrollbar; /* IE/Edge: autohide */
 }
 
+/* WebKit: make scrollbar area thin and transparent to keep mousewheel/touch scrolling working */
 .smro-sidebar-scrollable::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
+    height: 6px;
 }
 
 .smro-sidebar-scrollable::-webkit-scrollbar-track {
@@ -390,12 +397,12 @@ body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link .smro-nav-label {
 }
 
 .smro-sidebar-scrollable::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,.12);
+    background: rgba(255,255,255,0); /* fully transparent */
     border-radius: 4px;
 }
 
-.smro-sidebar-scrollable::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,.2);
+.smro-sidebar-scrollable:hover::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.06); /* subtle hint on hover */
 }
 
 /* Sidebar footer (user mini-profile area) */
@@ -552,6 +559,90 @@ body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link .smro-nav-label {
     }
 }
 
+/* Floating toast-style alerts */
+.smro-alerts-wrapper {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2050;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 380px;
+    pointer-events: none;
+}
+
+.smro-alert-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    pointer-events: auto;
+    padding: 1rem 1rem 1rem 0.95rem;
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+    animation: smro-alert-slide-in 250ms ease forwards;
+    transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.smro-alert-toast.smro-alert-hidden {
+    opacity: 0;
+    transform: translateY(-8px);
+}
+
+.smro-alert-icon {
+    width: 2.4rem;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: rgba(96, 165, 250, 0.14);
+    color: #60a5fa;
+    flex-shrink: 0;
+}
+
+.smro-alert-body {
+    flex: 1 1 auto;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: #e2e8f0;
+}
+
+.smro-alert-toast .btn-close {
+    opacity: 0.85;
+    margin-top: -0.15rem;
+}
+
+.smro-alert-toast.smro-alert-success {
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.smro-alert-toast.smro-alert-error {
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.smro-alert-toast.smro-alert-warning {
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.smro-alert-toast.smro-alert-info {
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+@keyframes smro-alert-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .smro-main .text-dark {
     color: #f8fafc !important;
 }
@@ -591,6 +682,18 @@ body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link .smro-nav-label {
 .smro-main .table tbody td,
 .smro-main .table tfoot td {
     color: #ffffff !important;
+}
+
+.smro-main .table th,
+.smro-main .table td {
+    word-break: break-word;
+    white-space: normal;
+}
+
+.smro-alert-body,
+.smro-main .table td,
+.smro-main .table th {
+    overflow-wrap: anywhere;
 }
 
 .smro-main .form-control,

@@ -59,16 +59,12 @@
                                     <td><?= esc($product['category_name'] ?? 'N/A') ?></td>
                                     <td><?= esc($product['brand']) ?></td>
                                     <td>₱<?= number_format((float)$product['base_price'], 2) ?></td>
+                                    <td class="text-center"><?= esc($product['variant_count']) ?></td>
                                     <td>
-                                        <a href="<?= site_url('products/' . $product['id']) ?>" class="btn btn-sm btn-info">
-                                            View
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="<?= site_url('products/' . $product['id']) ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="<?= site_url('products/' . $product['id']) ?>" class="btn btn-sm btn-outline-info me-1">Details</a>
                                         <?php if (in_array(session('role'), ['superadmin', 'manager'], true)): ?>
-                                            <a href="<?= site_url('products/' . $product['id'] . '/edit') ?>" class="btn btn-sm btn-outline-warning">Edit</a>
-                                            <form action="<?= site_url('products/' . $product['id']) ?>" method="post" class="d-inline" 
+                                            <a href="<?= site_url('products/' . $product['id'] . '/edit') ?>" class="btn btn-sm btn-outline-warning me-1">Edit</a>
+                                            <form action="<?= site_url('products/' . $product['id']) ?>" method="post" class="d-inline"
                                                   onsubmit="return confirm('Delete this product?');">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="_method" value="DELETE">

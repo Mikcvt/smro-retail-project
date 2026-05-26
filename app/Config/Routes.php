@@ -9,19 +9,37 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Public routes
-$routes->get('/', static function () {
-    if (session()->get('is_logged_in')) {
-        return redirect()->to('/dashboard');
-    }
-    return redirect()->to('/login');
-});
+$routes->get('/', 'Home::index');
 $routes->match(['get', 'post'], 'login', 'AuthController::login');
-$routes->match(['get', 'post'], 'register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');
 
 // Protected routes
 $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('dashboard', 'AuthController::dashboard');
+
+    // Profile & Support (all roles)
+    $routes->get('profile', 'ProfileController::index');
+    $routes->post('profile', 'ProfileController::update');
+    $routes->get('support', 'SupportController::index');
+
+    // Reports (manager + superadmin)
+    $routes->get('reports', 'ReportsController::index');
+    $routes->get('reports/export', 'ReportsController::export');
+
+    // User Management (superadmin only)
+    $routes->get('users', 'UserController::index');
+    $routes->get('users/create', 'UserController::create');
+    $routes->post('users', 'UserController::store');
+    $routes->get('users/(:num)/edit', 'UserController::edit/$1');
+    $routes->post('users/(:num)', 'UserController::update/$1');
+    $routes->post('users/(:num)/delete', 'UserController::delete/$1');
+
+    // Roles & Permissions (superadmin only)
+    $routes->get('users/roles', 'RolesController::index');
+
+    // Settings (superadmin only)
+    $routes->get('settings', 'SettingsController::index');
+    $routes->get('settings/audit', 'SettingsController::audit');
 
     // Resource group for products (Member 3)
     $routes->resource('products', ['controller' => 'ProductController']);

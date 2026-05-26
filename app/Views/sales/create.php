@@ -43,8 +43,8 @@
                 </div>
 
                 <div class="table-responsive mb-3">
-                    <table class="table table-bordered align-middle" id="items-table">
-                        <thead class="table-light">
+                    <table class="table table-dark table-bordered align-middle" id="items-table">
+                        <thead class="table-dark text-white">
                             <tr>
                                 <th>Product / Variant</th>
                                 <th>SKU</th>
