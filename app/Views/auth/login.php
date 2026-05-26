@@ -15,7 +15,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: auto;
+            padding: 1.5rem;
             position: relative;
         }
         .blob {
@@ -53,6 +54,11 @@
             padding: 3rem 2rem;
             z-index: 10;
             animation: fadeIn 0.8s ease-out;
+        }
+        @media (max-width: 575.98px) {
+            .glass-card {
+                padding: 2rem 1.25rem;
+            }
         }
         .form-control {
             background: rgba(15, 23, 42, 0.6);
@@ -142,7 +148,7 @@
         </form>
 
         <div class="text-center">
-            <span class="text-muted">Don't have an account?</span> 
+            <span class="text-white">Don't have an account?</span> 
             <a href="<?= base_url('register') ?>" class="auth-link">Register here</a>
         </div>
     </div>

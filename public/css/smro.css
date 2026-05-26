@@ -1,0 +1,1231 @@
+/* ==========================================================================
+   SMRO — Secure Multi-Tenant Resource Orchestrator
+   Global CSS Overrides & Custom Component Styles
+   Author   : Member 5 — Frontend UI & Dashboard
+   Stack    : Bootstrap 5.3 + Bootstrap Icons
+   ========================================================================== */
+
+/* ── 1. DESIGN TOKENS ──────────────────────────────────────────────────────── */
+:root {
+    /* Brand palette - dark blue system */
+    --smro-brand:           #60a5fa;   /* Soft blue accent           */
+    --smro-brand-dark:      #2563eb;   /* Hover state                */
+    --smro-brand-light:     #1e3a8a;   /* Soft blue surface tint     */
+    --smro-brand-glow:      rgba(59, 130, 246, 0.24);
+    --smro-accent:          #f59e0b;   /* Amber accent               */
+    --smro-danger:          #ef4444;   /* Alert red                  */
+    --smro-success:         #22c55e;   /* Success green              */
+    --smro-info:            #38bdf8;   /* Info cyan                  */
+
+    /* Sidebar */
+    --smro-sidebar-bg:      #091436;   /* Indigo blue                */
+    --smro-sidebar-bg-gradient: linear-gradient(180deg, #0e205c 0%, #1e3a8a 100%);
+    --smro-sidebar-width:   260px;
+    --smro-sidebar-collapsed-width: 80px;
+    --smro-sidebar-text:    #ffffff;   /* White text                 */
+    --smro-sidebar-hover:   rgba(255,255,255,0.12);
+    --smro-sidebar-active:  var(--smro-brand);
+    --smro-sidebar-active-bg: rgba(96, 165, 250, 0.18);
+
+    /* Navbar */
+    --smro-navbar-bg:       #081633;
+    --smro-navbar-border:   rgba(255,255,255,0.15);
+    --smro-navbar-height:   60px;
+    --smro-navbar-shadow:   0 1px 3px rgba(0,0,0,.15), 0 3px 10px rgba(0,0,0,.12);
+
+    /* Surface & radius */
+    --smro-surface:         #12223e;
+    --smro-surface-muted:   #0d1b35;
+    --smro-surface-soft:    rgba(255,255,255,0.05);
+    --smro-border-muted:    rgba(255,255,255,0.10);
+    --smro-radius-sm:       6px;
+    --smro-radius-md:       10px;
+    --smro-radius-lg:       14px;
+    --smro-radius-xl:       18px;
+    --smro-shadow-card:     0 1px 3px rgba(15,23,42,.07), 0 4px 12px rgba(15,23,42,.06);
+    --smro-shadow-elevated: 0 8px 24px rgba(15,23,42,.10), 0 2px 8px rgba(15,23,42,.07);
+    --smro-shadow-glow:     0 0 20px rgba(37, 99, 235, 0.12);
+
+    /* Typography */
+    --smro-font-base:       'Inter', 'Segoe UI', system-ui, sans-serif;
+    --smro-font-mono:       'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Metric cards */
+    --smro-metric-icon-size: 48px;
+
+    /* Transitions */
+    --smro-transition-fast: 150ms ease;
+    --smro-transition-normal: 250ms ease;
+    --smro-transition-slow: 350ms ease;
+}
+
+/* ── 2. BASE / RESET ───────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--smro-font-base);
+    background-color: #0b1631;
+    color: #e2e8f0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Prevent horizontal scroll at 375 px (mobile) */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* ── 3. SIDEBAR ────────────────────────────────────────────────────────────── */
+.smro-sidebar {
+    width: var(--smro-sidebar-width);
+    background: linear-gradient(180deg, #081946 0%, #101e49 100%);
+    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+    border-right: 1px solid rgba(255,255,255,.1);
+    box-shadow: 4px 0 24px rgba(15,23,42,.32);
+}
+
+body.smro-sidebar-collapsed .smro-sidebar,
+.smro-shell.sidebar-collapsed .smro-sidebar {
+    width: var(--smro-sidebar-collapsed-width);
+}
+
+body.smro-sidebar-collapsed .smro-sidebar .smro-nav-label,
+body.smro-sidebar-collapsed .smro-sidebar .smro-brand-text,
+body.smro-sidebar-collapsed .smro-sidebar .smro-nav-section,
+.smro-shell.sidebar-collapsed .smro-sidebar .smro-nav-label,
+.smro-shell.sidebar-collapsed .smro-sidebar .smro-brand-text,
+.smro-shell.sidebar-collapsed .smro-sidebar .smro-nav-section {
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.smro-main-wrap {
+    margin-left: var(--smro-sidebar-width);
+    transition: margin-left 0.25s ease;
+    min-width: 0;
+    min-height: 100vh;
+}
+
+body.smro-sidebar-collapsed .smro-main-wrap,
+.smro-shell.sidebar-collapsed .smro-main-wrap {
+    margin-left: var(--smro-sidebar-collapsed-width);
+}
+
+.smro-main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #07102a;
+}
+
+.smro-content {
+    flex: 1 1 auto;
+    background-color: transparent;
+}
+
+.smro-nav-section {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.72);
+    padding: 0.85rem 0.75rem 0.25rem;
+    margin: 0;
+}
+
+.smro-sidebar-bottom {
+    margin-top: auto;
+    padding: 1rem 0.75rem 1.25rem;
+    border-top: 1px solid rgba(255,255,255,.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.smro-sidebar-bottom .smro-nav-link {
+    color: #e2e8f0;
+}
+
+.smro-sidebar-bottom .smro-nav-link:hover {
+    background-color: rgba(255,255,255,.12);
+    color: #ffffff;
+}
+
+.smro-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 1025;
+    pointer-events: none;
+    cursor: pointer;
+}
+
+.smro-shell.sidebar-open .smro-sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.smro-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: 72px;
+    padding: 0 1rem;
+    color: #f8fafc;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    flex-shrink: 0;
+}
+
+.smro-brand-icon {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,.08);
+    color: var(--smro-brand);
+    font-size: 1.15rem;
+}
+
+.smro-brand-text {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.smro-brand-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1.1;
+}
+
+body.smro-sidebar-collapsed .smro-main-wrap,
+.smro-shell.sidebar-collapsed .smro-main-wrap {
+    margin-left: var(--smro-sidebar-collapsed-width);
+}
+
+/* Sidebar brand / logo area */
+.smro-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1rem 1.05rem;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    flex-shrink: 0;
+    min-height: 82px;
+}
+
+.smro-sidebar-brand .smro-brand-icon {
+    color: #1d4ed8;
+    background: #ffffff;
+    padding: 0.75rem;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.smro-sidebar-brand .smro-brand-text {
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.smro-sidebar-brand .smro-brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.smro-sidebar-brand .text-white-50 {
+    color: rgba(255,255,255,.72) !important;
+    font-size: 0.78rem;
+}
+
+/* Nav links */
+.smro-nav {
+    padding: 0.75rem 0.625rem;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.1) transparent;
+}
+
+.smro-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.smro-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.smro-nav::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.12);
+    border-radius: 4px;
+}
+
+.smro-sidebar-section-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a5b4cc;
+    padding: 0.875rem 0.625rem 0.25rem;
+    display: block;
+    transition: opacity 0.2s ease;
+}
+
+.smro-nav-item {
+    list-style: none;
+    margin-bottom: 2px;
+}
+
+.smro-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 14px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.smro-nav-link:hover,
+.smro-nav-link:focus-visible {
+    background-color: #2563eb;
+    color: #000000;
+}
+
+.smro-nav-link:hover .smro-nav-icon,
+.smro-nav-link:focus-visible .smro-nav-icon {
+    color: #ffffff;
+}
+
+.smro-nav-link.active {
+    background-color: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.smro-nav-link.active .smro-nav-icon {
+    color: #ffffff;
+}
+
+body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link {
+    justify-content: center;
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+}
+
+body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link .smro-nav-icon {
+    width: auto;
+    margin: 0;
+}
+
+body.smro-sidebar-collapsed .smro-sidebar .smro-nav-link .smro-nav-label {
+    display: none;
+}
+
+
+.smro-nav-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    color: #ffffff;
+}
+
+.smro-nav-label {
+    transition: opacity 0.2s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sidebar scrollable area */
+.smro-sidebar-scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1 1 auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.12) transparent;
+}
+
+.smro-sidebar-scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+
+.smro-sidebar-scrollable::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.smro-sidebar-scrollable::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.12);
+    border-radius: 4px;
+}
+
+.smro-sidebar-scrollable::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,.2);
+}
+
+/* Sidebar footer (user mini-profile area) */
+.smro-sidebar-footer {
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 0.875rem 1rem;
+    flex-shrink: 0;
+}
+.smro-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: var(--smro-navbar-height);
+    padding: 0 1.5rem;
+    background-color: var(--smro-navbar-bg);
+    border-bottom: 1px solid var(--smro-navbar-border);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    box-shadow: var(--smro-navbar-shadow);
+}
+
+.smro-navbar-left,
+.smro-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.smro-hamburger {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    background-color: rgba(255,255,255,.08);
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.smro-hamburger:hover,
+.smro-hamburger:focus-visible {
+    background-color: rgba(255,255,255,.12);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
+}
+
+@media (min-width: 768px) {
+    .smro-hamburger {
+        display: none;
+    }
+}
+
+.smro-hamburger:focus-visible {
+    border-color: var(--smro-brand);
+}
+
+.smro-page-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.smro-notif-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    background-color: rgba(255,255,255,.08);
+    color: #e2e8f0;
+    cursor: pointer;
+}
+
+.smro-notif-btn:hover {
+    background-color: rgba(255,255,255,.12);
+}
+
+.smro-notif-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ef4444;
+    border: 2px solid #ffffff;
+}
+
+.smro-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    background-color: rgba(255,255,255,.08);
+    color: #e2e8f0;
+    cursor: default;
+    min-width: 0;
+}
+
+.smro-user-info {
+    min-width: 0;
+}
+
+.smro-user-name-nav,
+.smro-user-role-nav {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.smro-user-name-nav {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.smro-user-role-nav {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+}
+
+.smro-footer {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid rgba(255,255,255,.12);
+    background-color: #1e3a8a;
+    color: #dbeafe;
+    font-size: 0.9rem;
+}
+
+.smro-footer span {
+    display: inline-block;
+}
+
+@media (max-width: 575.98px) {
+    .smro-footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.smro-main .text-dark {
+    color: #f8fafc !important;
+}
+
+.smro-main .container-fluid,
+.smro-main .container-fluid h1,
+.smro-main .container-fluid h2,
+.smro-main .container-fluid h3,
+.smro-main .container-fluid h4,
+.smro-main .container-fluid h5,
+.smro-main .container-fluid h6,
+.smro-main .container-fluid p,
+.smro-main .container-fluid span,
+.smro-main .container-fluid strong,
+.smro-main .container-fluid em,
+.smro-main .container-fluid td,
+.smro-main .container-fluid th,
+.smro-main .container-fluid label,
+.smro-main .container-fluid .form-label,
+.smro-main .container-fluid .form-check-label,
+.smro-main .container-fluid .text-muted,
+.smro-main .container-fluid .small,
+.smro-main .container-fluid .form-control,
+.smro-main .container-fluid .form-select,
+.smro-main .container-fluid .page-link,
+.smro-main .container-fluid .badge,
+.smro-main .container-fluid .btn-outline-secondary,
+.smro-main .container-fluid .btn-outline-primary,
+.smro-main .container-fluid .btn-outline-danger,
+.smro-main .container-fluid .btn-outline-warning,
+.smro-main .container-fluid .btn-outline-info,
+.smro-main .container-fluid a {
+    color: #ffffff !important;
+}
+
+.smro-main .table > thead > tr > th,
+.smro-main .table tbody td,
+.smro-main .table tfoot td {
+    color: #ffffff !important;
+}
+
+.smro-main .form-control,
+.smro-main .form-select {
+    background-color: #12223e !important;
+    border-color: rgba(255,255,255,.12) !important;
+}
+
+.smro-main .form-control::placeholder,
+.smro-main .form-select::placeholder {
+    color: rgba(255,255,255,.7) !important;
+}
+
+/* ── 4. NAVBAR ─────────────────────────────────────────────────────────────── */
+.smro-navbar {
+    height: var(--smro-navbar-height);
+    background-color: var(--smro-navbar-bg);
+    border-bottom: 1px solid var(--smro-navbar-border);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04);
+}
+
+.smro-user-btn {
+    background: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: var(--smro-radius-md);
+    padding: 0.375rem 0.625rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.smro-user-btn:hover,
+.smro-user-btn:focus {
+    background-color: rgba(255,255,255,.08);
+    border-color: rgba(255,255,255,.16);
+}
+
+.smro-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--smro-brand), #60a5fa);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(37,99,235,.2);
+}
+
+.smro-nav-username {
+    font-size: 0.8125rem;
+    color: #1e293b;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+.smro-role-badge {
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+    padding: 0.15em 0.5em;
+}
+
+.smro-user-dropdown {
+    min-width: 220px;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--smro-radius-md);
+    margin-top: 4px;
+}
+
+/* ── 5. ALERTS ─────────────────────────────────────────────────────────────── */
+.smro-alerts-wrapper {
+    position: sticky;
+    top: calc(var(--smro-navbar-height) + 0px);
+    z-index: 1010;
+    padding: 0.75rem 1rem 0;
+}
+
+/* ── 6. METRIC CARDS ───────────────────────────────────────────────────────── */
+.smro-metric-card {
+    border-radius: var(--smro-radius-md) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+    background-color: #12223e;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    color: #e2e8f0;
+}
+
+.smro-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, .18) !important;
+}
+
+.smro-metric-card.smro-card-alert {
+    border-left: 3px solid var(--smro-danger) !important;
+}
+
+.smro-metric-icon {
+    width: var(--smro-metric-icon-size);
+    height: var(--smro-metric-icon-size);
+    border-radius: var(--smro-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.smro-metric-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a5b4fc;
+    margin-bottom: 0.125rem;
+}
+
+.smro-metric-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #f8fafc;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+/* Smaller value variant for long currency strings */
+.smro-metric-value--sm {
+    font-size: 1.25rem;
+}
+
+/* ── 7. TABLES ─────────────────────────────────────────────────────────────── */
+.table {
+    font-size: 0.875rem;
+}
+
+.table > thead > tr > th {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #64748b;
+    border-bottom-width: 1px;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    white-space: nowrap;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: #f3f4f6;   /* Soft neutral hover tint */
+}
+
+.table > tfoot > tr > td {
+    border-top: 2px solid #e2e8f0;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+/* Action column buttons */
+.table td .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: var(--smro-radius-sm);
+}
+
+.table.table-striped > tbody > tr:nth-of-type(odd) > td,
+.table.table-striped > tbody > tr:nth-of-type(odd) > th {
+    background-color: rgba(255,255,255,.02);
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(255,255,255,.06);
+}
+
+.smro-main .bg-white {
+    background-color: rgba(255,255,255,.02) !important;
+    color: #e2e8f0 !important;
+}
+
+.smro-main .bg-light {
+    background-color: rgba(255,255,255,.04) !important;
+}
+
+.smro-main .text-dark,
+.smro-main .fw-semibold.text-dark {
+    color: #e2e8f0 !important;
+}
+
+.smro-main .text-muted {
+    color: #94a3b8 !important;
+}
+
+.smro-main .card-header.bg-white {
+    background-color: rgba(255,255,255,.04) !important;
+    color: #e2e8f0 !important;
+}
+
+.smro-main .btn-outline-secondary {
+    color: #cbd5e1 !important;
+    border-color: rgba(148,163,184,.35) !important;
+}
+
+.smro-main .btn-outline-secondary:hover,
+.smro-main .btn-outline-secondary:focus {
+    color: #ffffff !important;
+    background-color: rgba(255,255,255,.08) !important;
+    border-color: rgba(148,163,184,.55) !important;
+}
+
+.smro-main .btn-warning {
+    background-color: var(--smro-brand) !important;
+    border-color: var(--smro-brand-dark) !important;
+    color: #ffffff !important;
+}
+
+.smro-main .btn-warning:hover,
+.smro-main .btn-warning:focus {
+    background-color: var(--smro-brand-dark) !important;
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.smro-main .badge.bg-warning {
+    background-color: var(--smro-brand) !important;
+    color: #ffffff !important;
+}
+
+.smro-main .badge.bg-primary {
+    background-color: #60a5fa !important;
+    color: #0f172a !important;
+}
+
+.smro-main .badge.bg-danger {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* ── 8. BADGES — ROLE LABELS ───────────────────────────────────────────────── */
+.badge.bg-danger   { background-color: #dc2626 !important; }
+.badge.bg-warning  { background-color: #f59e0b !important; }
+.badge.bg-primary  { background-color: var(--smro-brand) !important; }
+
+/* ── 9. CARDS ──────────────────────────────────────────────────────────────── */
+.card {
+    border-radius: var(--smro-radius-md) !important;
+    box-shadow: var(--smro-shadow-card);
+    background-color: var(--smro-surface) !important;
+    border: 1px solid var(--smro-border-muted) !important;
+    color: #e2e8f0;
+}
+
+.card-header {
+    border-radius: var(--smro-radius-md) var(--smro-radius-md) 0 0 !important;
+    background-color: rgba(255,255,255,.05) !important;
+    border-bottom: 1px solid var(--smro-border-muted) !important;
+    color: #e2e8f0;
+}
+
+/* Quick action cards (staff dashboard) */
+.smro-quick-action-card {
+    background-color: var(--smro-surface) !important;
+    border: 1.5px solid var(--smro-border-muted) !important;
+    border-radius: var(--smro-radius-md) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.smro-quick-action-card:hover {
+    border-color: var(--smro-brand) !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .08) !important;
+    transform: translateY(-2px);
+}
+
+.smro-quick-action-card--primary:hover {
+    background-color: var(--smro-brand-light) !important;
+}
+
+/* ── 10. EMPTY STATE ───────────────────────────────────────────────────────── */
+.smro-empty-state {
+    min-height: 200px;
+}
+
+.smro-empty-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.smro-empty-icon .bi {
+    font-size: 2rem;
+    color: #94a3b8;
+}
+
+.smro-empty-message {
+    font-size: 0.9375rem;
+}
+
+.smro-empty-sub {
+    max-width: 280px;
+}
+
+/* ── 11. STAFF DASHBOARD SPECIFICS ────────────────────────────────────────── */
+.smro-wave {
+    display: inline-block;
+    animation: smroWave 1.8s ease-in-out 0.3s 2;
+    transform-origin: 70% 70%;
+}
+
+@keyframes smroWave {
+    0%, 100% { transform: rotate(0deg);   }
+    20%       { transform: rotate(20deg);  }
+    60%       { transform: rotate(-10deg); }
+    80%       { transform: rotate(10deg);  }
+}
+
+.smro-cta-btn {
+    border-radius: var(--smro-radius-md);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .12);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.smro-cta-btn:hover {
+    box-shadow: 0 4px 16px rgba(15, 23, 42, .16);
+    transform: translateY(-1px);
+}
+
+/* ── 12. TOP PRODUCTS RANKING ──────────────────────────────────────────────── */
+.smro-rank-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.smro-rank-gold   { background-color: #fef3c7; color: #92400e; }
+.smro-rank-silver { background-color: #f1f5f9; color: #475569; }
+.smro-rank-bronze { background-color: #fef3c7; color: #78350f;
+                    filter: brightness(0.92); }
+.smro-rank-default { background-color: #f1f5f9; color: #94a3b8; }
+
+/* ── 13. MAIN CONTENT AREA ─────────────────────────────────────────────────── */
+.smro-content {
+    margin: 0 auto;
+    padding: 1.5rem;
+    max-width: 1400px;
+}
+
+/* ── 14. FORM VALIDATION ERRORS ────────────────────────────────────────────── */
+.smro-field-error {
+    font-size: 0.8125rem;
+    color: var(--smro-danger);
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.smro-field-error::before {
+    content: "\F333";   /* bi-exclamation-circle */
+    font-family: "bootstrap-icons";
+    font-style: normal;
+    font-size: 0.75rem;
+}
+
+/* ── 15. ANIMATIONS & TRANSITIONS ──────────────────────────────────────────── */
+/* Fade in animation for page load */
+@keyframes smroFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Slide in from left for sidebar */
+@keyframes smroSlideInLeft {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+}
+
+/* Pulse animation for notifications */
+@keyframes smroPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Shimmer effect for loading states */
+@keyframes smroShimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Float animation for decorative elements */
+@keyframes smroFloat {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-10px); }
+}
+
+/* Card entrance animation */
+.smro-animate-in {
+    animation: smroFadeIn 0.4s ease forwards;
+}
+
+.smro-animate-in:nth-child(1) { animation-delay: 0ms; }
+.smro-animate-in:nth-child(2) { animation-delay: 50ms; }
+.smro-animate-in:nth-child(3) { animation-delay: 100ms; }
+.smro-animate-in:nth-child(4) { animation-delay: 150ms; }
+
+/* ── 16. GLASSMORPHISM EFFECTS ─────────────────────────────────────────────── */
+.smro-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.smro-glass-dark {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ── 17. SCROLLBAR STYLING ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ── 18. RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    /* Sidebar hides off-canvas on mobile */
+    .smro-sidebar {
+        transform: translateX(-100%);
+        width: var(--smro-sidebar-width);
+    }
+
+    .smro-shell.sidebar-open .smro-sidebar {
+        transform: translateX(0);
+    }
+
+    .smro-main-wrap {
+        margin-left: 0 !important;
+    }
+
+    .smro-footer,
+    .smro-navbar {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+
+@media (max-width: 575.98px) {
+    .smro-content {
+        padding: 1rem 0.875rem;
+    }
+
+    .smro-metric-value {
+        font-size: 1.375rem;
+    }
+
+    .smro-alerts-wrapper {
+        padding: 0.5rem 0.875rem 0;
+    }
+
+    /* Stack metric cards on mobile */
+    .smro-metric-card {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Larger touch targets */
+    .btn, .nav-link {
+        min-height: 44px;
+    }
+}
+
+/* ── 19. PRINT STYLES ──────────────────────────────────────────────────────── */
+@media print {
+    .smro-sidebar,
+    .smro-navbar,
+    .smro-alerts-wrapper {
+        display: none !important;
+    }
+
+    .smro-main-wrap {
+        margin-left: 0 !important;
+    }
+
+    .smro-content {
+        padding: 0;
+        max-width: none;
+    }
+}
+
+/* ── 20. DARK MODE SUPPORT (prefers-color-scheme) ──────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --smro-navbar-bg:     #1e293b;
+        --smro-navbar-border: #334155;
+        --smro-navbar-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+    }
+
+    .card {
+        background-color: #1e293b;
+        border-color: #334155;
+    }
+
+    .table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e2e8f0;
+        --bs-table-border-color: #334155;
+    }
+
+    .smro-metric-value {
+        color: #f8fafc;
+    }
+
+    .smro-metric-label {
+        color: #94a3b8;
+    }
+}
+
+/* ── 21. ACCESSIBILITY ─────────────────────────────────────────────────────── */
+/* Focus visible styles for keyboard navigation */
+:focus-visible {
+    outline: 2px solid var(--smro-brand);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .smro-nav-link {
+        border: 1px solid transparent;
+    }
+
+    .smro-nav-link:hover,
+    .smro-nav-link.active {
+        border-color: currentColor;
+    }
+}
+
+/* ── 22. UTILITY CLASSES ───────────────────────────────────────────────────── */
+.smro-text-gradient {
+    background: linear-gradient(135deg, var(--smro-brand), #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.btn-warning {
+    background-color: var(--smro-brand) !important;
+    border-color: var(--smro-brand-dark) !important;
+    color: #ffffff !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+    background-color: var(--smro-brand-dark) !important;
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.btn-outline-secondary {
+    color: #cbd5e1 !important;
+    border-color: rgba(148,163,184,.35) !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+    color: #ffffff !important;
+    background-color: rgba(255,255,255,.08) !important;
+    border-color: rgba(148,163,184,.55) !important;
+}
+.smro-shadow-hover {
+    transition: box-shadow var(--smro-transition-normal);
+}
+
+.smro-shadow-hover:hover {
+    box-shadow: var(--smro-shadow-elevated);
+}
+
+.smro-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.smro-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

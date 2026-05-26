@@ -15,7 +15,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: auto;
+            padding: 1.5rem;
             position: relative;
         }
         .blob {
@@ -53,6 +54,11 @@
             padding: 3rem 2rem;
             z-index: 10;
             animation: fadeIn 0.8s ease-out;
+        }
+        @media (max-width: 575.98px) {
+            .glass-card {
+                padding: 2rem 1.25rem;
+            }
         }
         .form-control {
             background: rgba(15, 23, 42, 0.6);
@@ -134,15 +140,6 @@
                 <div class="invalid-feedback"><?= session('errors.email') ?></div>
             </div>
 
-            <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select name="role" id="role" class="form-select <?= session('errors.role') ? 'is-invalid' : '' ?>" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 10px; padding: 0.75rem 1rem;">
-                    <option value="staff" <?= old('role') === 'staff' ? 'selected' : '' ?>>Staff</option>
-                    <option value="manager" <?= old('role') === 'manager' ? 'selected' : '' ?>>Manager</option>
-                    <option value="superadmin" <?= old('role') === 'superadmin' ? 'selected' : '' ?>>Super Admin</option>
-                </select>
-                <div class="invalid-feedback"><?= session('errors.role') ?></div>
-            </div>
             
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
@@ -162,7 +159,7 @@
         </form>
 
         <div class="text-center">
-            <span class="text-muted">Already have an account?</span> 
+            <span class="text-white">Already have an account?</span> 
             <a href="<?= base_url('login') ?>" class="auth-link">Sign In</a>
         </div>
     </div>
