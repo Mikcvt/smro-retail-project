@@ -86,10 +86,15 @@ class SaleController extends BaseController
             $totalAmount += $subtotal;
 
             // Atomic stock deduction — no read-then-write race condition
-            $variantModel
+            $rowsAffected = $db->table('product_variants')
                 ->set('stock_quantity', 'stock_quantity - ' . $qty, false)
                 ->where('id', (int) $variantId)
                 ->update();
+
+            if ($db->affectedRows() === 0) {
+                $db->transRollback();
+                return redirect()->back()->withInput()->with('error', 'Failed to deduct stock for one or more items.');
+            }
 
             $items[] = [
                 'variant_id' => (int) $variantId,
@@ -127,6 +132,8 @@ class SaleController extends BaseController
         if (!$db->transStatus()) {
             return redirect()->back()->withInput()->with('error', 'Transaction failed. Please try again.');
         }
+
+        cache()->clean();
 
         return redirect()->to(site_url('sales'))->with('success', "Sale {$referenceNo} recorded successfully.");
     }
@@ -208,6 +215,8 @@ class SaleController extends BaseController
         if (!$db->transStatus()) {
             return redirect()->to(site_url('sales'))->with('error', 'Failed to void sale.');
         }
+
+        cache()->clean();
 
         return redirect()->to(site_url('sales'))->with('success', 'Sale voided and stock restored.');
     }

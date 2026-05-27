@@ -23,6 +23,8 @@
                             <option value="">-- Choose Product --</option>
                             <?php foreach ($products as $product): ?>
                                 <option value="<?= $product['id'] ?>"
+                                        data-name="<?= esc($product['name'], 'attr') ?>"
+                                        data-base-price="<?= number_format((float) $product['base_price'], 2, '.', '') ?>"
                                         data-variants="<?= esc(json_encode($product['variants'] ?? []), 'attr') ?>">
                                     <?= esc($product['name']) ?> — ₱<?= number_format((float) $product['base_price'], 2) ?>
                                 </option>
@@ -94,7 +96,26 @@
     let itemIndex = 0;
     let grandTotal = 0;
 
+    function resetProductOptions() {
+        Array.from(productSelect.options).forEach(opt => {
+            if (!opt.value) return;
+            const basePrice = parseFloat(opt.dataset.basePrice) || 0;
+            const name = opt.dataset.name || opt.textContent.split('—')[0].trim();
+            opt.textContent = `${name} — ₱${basePrice.toFixed(2)}`;
+        });
+    }
+
+    function updateSelectedProductLabel(finalPrice) {
+        const selected = productSelect.options[productSelect.selectedIndex];
+        if (!selected || !selected.value) return;
+
+        const name = selected.dataset.name || selected.textContent.split('—')[0].trim();
+        selected.textContent = `${name} — ₱${finalPrice.toFixed(2)}`;
+    }
+
     productSelect.addEventListener('change', function () {
+        resetProductOptions();
+
         const selected = this.options[this.selectedIndex];
         const variants = JSON.parse(selected.dataset.variants || '[]');
 
@@ -104,21 +125,47 @@
 
         if (!this.value || variants.length === 0) return;
 
+        const basePrice = parseFloat(selected.dataset.basePrice) || 0;
+        let hasAvailableVariant = false;
+
         variants.forEach(v => {
+            const stock = parseInt(v.stock_quantity || 0, 10);
+            const finalPrice = basePrice + parseFloat(v.price_modifier || 0);
             const opt = document.createElement('option');
+
             opt.value = v.id;
-            opt.textContent = `${v.size} / ${v.color} — SKU: ${v.sku} (Stock: ${v.stock_quantity})`;
-            opt.dataset.price = v.price_modifier;
+            opt.textContent = `${v.size} / ${v.color} — SKU: ${v.sku} (Stock: ${stock})`;
+            opt.dataset.price = finalPrice.toFixed(2);
             opt.dataset.sku   = v.sku;
-            opt.dataset.stock = v.stock_quantity;
+            opt.dataset.stock = stock;
+
+            if (stock <= 0) {
+                opt.disabled = true;
+                opt.textContent += ' — OUT OF STOCK';
+            } else {
+                hasAvailableVariant = true;
+            }
+
             variantSelect.appendChild(opt);
         });
 
-        variantSelect.disabled = false;
+        if (hasAvailableVariant) {
+            variantSelect.disabled = false;
+        } else {
+            variantSelect.innerHTML = '<option value="">-- No variants in stock --</option>';
+            variantSelect.disabled = true;
+        }
     });
 
     variantSelect.addEventListener('change', function () {
         addItemBtn.disabled = !this.value;
+        const selectedVariant = this.options[this.selectedIndex];
+        if (selectedVariant && selectedVariant.value) {
+            const finalPrice = parseFloat(selectedVariant.dataset.price) || 0;
+            updateSelectedProductLabel(finalPrice);
+        } else {
+            resetProductOptions();
+        }
     });
 
     addItemBtn.addEventListener('click', function () {
@@ -127,16 +174,20 @@
 
         if (!productOpt.value || !variantOpt.value) return;
 
-        if (emptyRow) emptyRow.remove();
-
         const price = parseFloat(variantOpt.dataset.price) || 0;
         const stock = parseInt(variantOpt.dataset.stock) || 0;
-        const idx   = itemIndex++;
+        if (stock <= 0) {
+            alert('Selected variant is currently out of stock.');
+            return;
+        }
 
+        if (emptyRow) emptyRow.remove();
+
+        const idx = itemIndex++;
         const row = document.createElement('tr');
         row.dataset.index = idx;
         row.innerHTML = `
-            <td>${productOpt.text.split('—')[0].trim()} — ${variantOpt.text.split('—')[0].trim()}
+            <td>${productOpt.dataset.name || productOpt.text.split('—')[0].trim()} — ${variantOpt.text.split('—')[0].trim()}
                 <input type="hidden" name="variants[]" value="${variantOpt.value}">
             </td>
             <td>${variantOpt.dataset.sku}</td>

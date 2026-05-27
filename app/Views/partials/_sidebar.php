@@ -126,11 +126,14 @@ function smroNavSection(string $label): void
 
         <?php if (in_array($role, ['superadmin', 'manager'], true)) : ?>
             <?php
-            // Show low-stock alert count badge if set in session
-            $lowStockCount = session('low_stock_count') ?? '';
-            $lowStockBadge = ($lowStockCount !== '' && (int) $lowStockCount > 0)
-                ? (string) $lowStockCount
-                : '';
+            $lowStockCount = model(\App\Models\ProductModel::class)
+                ->select('products.id')
+                ->join('product_variants', 'product_variants.product_id = products.id', 'left')
+                ->where('products.is_active', 1)
+                ->groupBy('products.id')
+                ->having('COALESCE(SUM(product_variants.stock_quantity), 0) <', 10)
+                ->countAllResults();
+            $lowStockBadge = $lowStockCount > 0 ? (string) $lowStockCount : '';
             smroNavLink('products/low-stock', 'bi-exclamation-triangle', 'Low Stock', $lowStockBadge);
             ?>
         <?php endif; ?>

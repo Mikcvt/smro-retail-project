@@ -26,7 +26,15 @@
                 <?php endif; ?>
                 <div class="card-body">
                     <h5 class="card-title"><?= esc($product['brand']) ?></h5>
-                    <p class="card-text">₱<?= number_format((float)$product['base_price'], 2) ?></p>
+                    <div class="mb-3">
+                        <span class="badge bg-secondary me-2"><?= esc($product['category_name'] ?? 'Uncategorized') ?></span>
+                        <span class="badge bg-info text-dark">₱<?= number_format((float)$product['base_price'], 2) ?></span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="badge bg-<?= $product['total_stock'] < 10 ? 'danger' : ($product['total_stock'] < 50 ? 'warning' : 'success') ?>">
+                            Available stock: <?= esc($product['total_stock']) ?>
+                        </span>
+                    </div>
                     <p class="card-text text-muted"><?= esc($product['description'] ?? 'No description') ?></p>
                 </div>
             </div>

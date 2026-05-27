@@ -23,10 +23,10 @@ class ProductSeeder extends Seeder
         $data = [
             [
                 'category_id' => $categoryMap['T-Shirts'],
-                'name' => 'Basic Cotton Tee',
-                'description' => 'Comfortable everyday cotton shirt',
-                'brand' => 'SMRO Basic',
-                'base_price' => 299.00,
+                'name' => 'Minimalist Crewneck Tee',
+                'description' => 'Soft premium cotton with a clean, modern silhouette.',
+                'brand' => 'Asteria Studio',
+                'base_price' => 549.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -35,10 +35,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['T-Shirts'],
-                'name' => 'Graphic Street Tee',
-                'description' => 'Urban-style printed shirt',
-                'brand' => 'StreetWear',
-                'base_price' => 399.00,
+                'name' => 'Signature Logo Tee',
+                'description' => 'Limited edition streetwear tee with refined branding.',
+                'brand' => 'Noir Atelier',
+                'base_price' => 725.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -47,10 +47,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Hoodies'],
-                'name' => 'Pullover Hoodie',
-                'description' => 'Warm casual hoodie',
-                'brand' => 'CozyFit',
-                'base_price' => 899.00,
+                'name' => 'Fleece Oversized Hoodie',
+                'description' => 'Structured, heavyweight fleece for premium comfort.',
+                'brand' => 'LuxeStreet',
+                'base_price' => 1699.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -59,10 +59,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Hoodies'],
-                'name' => 'Zip-up Hoodie',
-                'description' => 'Full-zip lightweight hoodie',
-                'brand' => 'UrbanWear',
-                'base_price' => 999.00,
+                'name' => 'Techwear Zip Hoodie',
+                'description' => 'Water-resistant shell with streamlined utility details.',
+                'brand' => 'Nebula',
+                'base_price' => 1899.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -71,10 +71,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Pants'],
-                'name' => 'Slim Fit Jeans',
-                'description' => 'Modern slim jeans',
-                'brand' => 'DenimCo',
-                'base_price' => 799.00,
+                'name' => 'Tailored Chino Pants',
+                'description' => 'Clean tapered fit with polished, wrinkle-resistant fabric.',
+                'brand' => 'Monochrome',
+                'base_price' => 1399.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -83,10 +83,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Pants'],
-                'name' => 'Jogger Pants',
-                'description' => 'Comfortable athletic joggers',
-                'brand' => 'ActiveLife',
-                'base_price' => 699.00,
+                'name' => 'Premium Denim Jeans',
+                'description' => 'High-rise denim with clean finish and comfortable stretch.',
+                'brand' => 'Denim District',
+                'base_price' => 1899.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -95,10 +95,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Shoes'],
-                'name' => 'Casual Sneakers',
-                'description' => 'Everyday wear sneakers',
-                'brand' => 'StepUp',
-                'base_price' => 1299.00,
+                'name' => 'Leather Derby Shoes',
+                'description' => 'Classic polished leather footwear for modern tailoring.',
+                'brand' => 'Crown Footwear',
+                'base_price' => 2599.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -107,10 +107,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Shoes'],
-                'name' => 'Running Shoes',
-                'description' => 'Lightweight performance shoes',
-                'brand' => 'RunFast',
-                'base_price' => 1499.00,
+                'name' => 'Minimalist Slide Sneakers',
+                'description' => 'Sleek low-profile sneaker with premium cushioning.',
+                'brand' => 'Flux',
+                'base_price' => 1849.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -119,10 +119,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Accessories'],
-                'name' => 'Baseball Cap',
-                'description' => 'Adjustable street cap',
-                'brand' => 'HeadWear',
-                'base_price' => 199.00,
+                'name' => 'Premium Canvas Tote',
+                'description' => 'Structured tote with reinforced straps and minimal branding.',
+                'brand' => 'Canvas Co.',
+                'base_price' => 749.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -131,10 +131,10 @@ class ProductSeeder extends Seeder
 
             [
                 'category_id' => $categoryMap['Accessories'],
-                'name' => 'Canvas Backpack',
-                'description' => 'Durable everyday backpack',
-                'brand' => 'CarryAll',
-                'base_price' => 599.00,
+                'name' => 'Signature Leather Belt',
+                'description' => 'Vegetable-tanned belt with brushed metal hardware.',
+                'brand' => 'Velour',
+                'base_price' => 849.00,
                 'image_path' => null,
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),

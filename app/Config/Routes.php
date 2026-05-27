@@ -31,7 +31,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('users/create', 'UserController::create');
     $routes->post('users', 'UserController::store');
     $routes->get('users/(:num)/edit', 'UserController::edit/$1');
-    $routes->post('users/(:num)', 'UserController::update/$1');
+    $routes->match(['post', 'put'], 'users/(:num)', 'UserController::update/$1');
     $routes->post('users/(:num)/delete', 'UserController::delete/$1');
 
     // Roles & Permissions (superadmin only)
@@ -42,6 +42,7 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('settings/audit', 'SettingsController::audit');
 
     // Resource group for products (Member 3)
+    $routes->get('products/low-stock', 'ProductController::lowStock');
     $routes->resource('products', ['controller' => 'ProductController']);
     $routes->post('products/(:num)/stock', 'ProductController::adjustStock/$1');
 

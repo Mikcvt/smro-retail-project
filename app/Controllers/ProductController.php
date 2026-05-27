@@ -42,21 +42,20 @@ class ProductController extends BaseController
     // ─────────────────────────────────────────────────────────────────
     public function index(): string
     {
+        return view('products/index', $this->prepareProductListData());
+    }
+
+    public function lowStock(): string
+    {
+        return view('products/index', $this->prepareProductListData('low'));
+    }
+
+    private function prepareProductListData(string $stock = ''): array
+    {
         $q        = $this->request->getGet('q')        ?? '';
         $category = $this->request->getGet('category') ?? '';
-        $stock    = $this->request->getGet('stock')    ?? '';
+        $stock    = $stock !== '' ? $stock : ($this->request->getGet('stock') ?? '');
 
-        // Build a unique cache key from the filter parameters + page number.
-        $page      = (int) ($this->request->getGet('page') ?? 1);
-        $cacheKey  = 'product_list_' . md5($q . $category . $stock . $page);
-
-        // Try reading from cache (FileHandler, 5-minute TTL = 300 s).
-        $cached = cache($cacheKey);
-        if ($cached !== null) {
-            return view('products/index', $cached);
-        }
-
-        // Build the query dynamically.
         $builder = $this->productModel
             ->select('products.*, categories.name AS category_name,
                       COALESCE(SUM(product_variants.stock_quantity), 0) AS total_stock,
@@ -85,7 +84,7 @@ class ProductController extends BaseController
         $pager         = $this->productModel->pager;
         $categories    = $this->categoryModel->findAll();
         $lowStockCount = $this->productModel
-            ->select('products.id, COALESCE(SUM(product_variants.stock_quantity),0) AS ts')
+            ->select('products.id')
             ->join('product_variants', 'product_variants.product_id = products.id', 'left')
             ->where('products.is_active', 1)
             ->groupBy('products.id')
@@ -93,11 +92,9 @@ class ProductController extends BaseController
             ->countAllResults();
 
         $data = compact('products', 'pager', 'categories', 'lowStockCount');
+        $data['selectedStock'] = $stock;
 
-        // Store result in cache for 300 seconds (5 minutes).
-        cache()->save($cacheKey, $data, 300);
-
-        return view('products/index', $data);
+        return $data;
     }
 
     // ─────────────────────────────────────────────────────────────────
@@ -170,10 +167,13 @@ class ProductController extends BaseController
     public function show(int|string $id = null): string|RedirectResponse
     {
         $product = $this->productModel
-            ->select('products.*, categories.name AS category_name')
+            ->select('products.*, categories.name AS category_name,
+                      COALESCE(SUM(product_variants.stock_quantity), 0) AS total_stock')
             ->join('categories', 'categories.id = products.category_id', 'left')
+            ->join('product_variants', 'product_variants.product_id = products.id', 'left')
             ->where('products.id', $id)
             ->where('products.is_active', 1)
+            ->groupBy('products.id')
             ->first();
 
         if ($product === null) {

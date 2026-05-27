@@ -20,6 +20,12 @@
 
     <?= $this->include('partials/_alerts') ?>
 
+    <?php if (!empty($selectedStock) && $selectedStock === 'low'): ?>
+        <div class="alert alert-warning">
+            Showing low-stock products only. Replenish items with fewer than 10 units available.
+        </div>
+    <?php endif; ?>
+
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
@@ -32,6 +38,7 @@
                             <th>Category</th>
                             <th>Brand</th>
                             <th>Base Price</th>
+                            <th>Total Stock</th>
                             <th>Variants</th>
                             <th>Actions</th>
                         </tr>
@@ -39,7 +46,7 @@
                     <tbody>
                         <?php if (empty($products)): ?>
                             <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">No products found.</td>
+                                <td colspan="9" class="text-center py-4 text-muted">No products found.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($products as $product): ?>
@@ -59,6 +66,11 @@
                                     <td><?= esc($product['category_name'] ?? 'N/A') ?></td>
                                     <td><?= esc($product['brand']) ?></td>
                                     <td>₱<?= number_format((float)$product['base_price'], 2) ?></td>
+                                    <td>
+                                        <span class="badge bg-<?= $product['total_stock'] < 10 ? 'danger' : ($product['total_stock'] < 50 ? 'warning' : 'success') ?>">
+                                            <?= esc($product['total_stock']) ?>
+                                        </span>
+                                    </td>
                                     <td class="text-center"><?= esc($product['variant_count']) ?></td>
                                     <td>
                                         <a href="<?= site_url('products/' . $product['id']) ?>" class="btn btn-sm btn-outline-info me-1">Details</a>
